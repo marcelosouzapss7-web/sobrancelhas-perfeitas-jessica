@@ -121,7 +121,7 @@ function CheckoutPage() {
       if (!res.success) {
         setPixError(res.error);
       } else {
-        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code, hash: res.hash });
         // Registrar pedido no admin
         await supabase.from("pedidos").insert({
           customer_name: name.trim(),
