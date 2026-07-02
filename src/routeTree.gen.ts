@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
 import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
+import { Route as AuthenticatedAdminArquivoRouteImport } from './routes/_authenticated/admin.arquivo'
 
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
@@ -80,12 +81,19 @@ const AuthenticatedAdminAvaliacoesRoute =
     path: '/avaliacoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminArquivoRoute =
+  AuthenticatedAdminArquivoRouteImport.update({
+    id: '/arquivo',
+    path: '/arquivo',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/checkout': typeof CheckoutRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/checkout': typeof CheckoutRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
@@ -112,6 +121,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/checkout': typeof CheckoutRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/checkout'
     | '/admin'
+    | '/admin/arquivo'
     | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/pedidos'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/checkout'
     | '/admin'
+    | '/admin/arquivo'
     | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/pedidos'
@@ -151,6 +163,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/checkout'
     | '/_authenticated/admin'
+    | '/_authenticated/admin/arquivo'
     | '/_authenticated/admin/avaliacoes'
     | '/_authenticated/admin/banner'
     | '/_authenticated/admin/pedidos'
@@ -245,10 +258,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAvaliacoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/arquivo': {
+      id: '/_authenticated/admin/arquivo'
+      path: '/arquivo'
+      fullPath: '/admin/arquivo'
+      preLoaderRoute: typeof AuthenticatedAdminArquivoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminArquivoRoute: typeof AuthenticatedAdminArquivoRoute
   AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
@@ -258,6 +279,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminArquivoRoute: AuthenticatedAdminArquivoRoute,
   AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
