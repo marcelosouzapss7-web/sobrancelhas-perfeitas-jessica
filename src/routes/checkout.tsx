@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2, Copy, Loader2 } from "lucide-react";
-import { createIronpayPix } from "@/lib/ironpay.functions";
+import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2, Copy, Loader2, Download } from "lucide-react";
+import { createIronpayPix, checkIronpayPixStatus } from "@/lib/ironpay.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/checkout")({
@@ -57,9 +57,11 @@ function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [document_, setDocument] = useState("");
   const [loading, setLoading] = useState(false);
-  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string } | null>(null);
+  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string; hash: string } | null>(null);
   const [pixError, setPixError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [pixPaid, setPixPaid] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   // Campos do cartão
   const [cardNumber, setCardNumber] = useState("");
@@ -74,6 +76,8 @@ function CheckoutPage() {
   const AMOUNT_CENTS = 9990;
 
   const createPix = useServerFn(createIronpayPix);
+  const checkPixStatus = useServerFn(checkIronpayPixStatus);
+
 
   const validateCustomer = (setErr: (m: string | null) => void) => {
     if (!email || email !== emailConfirm) {
@@ -117,7 +121,7 @@ function CheckoutPage() {
       if (!res.success) {
         setPixError(res.error);
       } else {
-        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code, hash: res.hash });
         // Registrar pedido no admin
         await supabase.from("pedidos").insert({
           customer_name: name.trim(),
@@ -191,8 +195,29 @@ function CheckoutPage() {
       /* ignore */
     }
   };
-
-
+  // Polling do status do Pix na IronPay a cada 5s
+  useEffect(() => {
+    if (!pixData?.hash || pixPaid) return;
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const r = await checkPixStatus({ data: { hash: pixData.hash } });
+        if (cancelled) return;
+        if (r.paid) {
+          setPixPaid(true);
+          setDownloadUrl(r.download_url);
+          if (pixData.hash) {
+            await supabase.from("pedidos").update({ status: "paid" } as never).eq("pix_hash", pixData.hash);
+          }
+        }
+      } catch {
+        /* silencioso */
+      }
+    };
+    tick();
+    const id = setInterval(tick, 5000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [pixData?.hash, pixPaid, checkPixStatus]);
 
 
   return (
@@ -407,28 +432,57 @@ function CheckoutPage() {
                     >×</button>
                   </div>
                   <div className="p-5 text-center space-y-4">
-                    {qrSrc ? (
-                      <img
-                        src={qrSrc}
-                        alt="QR Code Pix"
-                        className="w-60 h-60 mx-auto border border-neutral-200 rounded"
-                        onError={(e) => {
-                          const img = e.currentTarget;
-                          if (fallback && img.src !== fallback) img.src = fallback;
-                        }}
-                      />
+                    {pixPaid ? (
+                      <div className="space-y-4">
+                        <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                          <CheckCircle2 className="w-10 h-10 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-green-700">Pagamento confirmado!</p>
+                          <p className="text-xs text-neutral-600 mt-1">Seu acesso está liberado. Baixe seu material abaixo.</p>
+                        </div>
+                        {downloadUrl ? (
+                          <a
+                            href={downloadUrl}
+                            download
+                            className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-3 rounded transition"
+                          >
+                            <Download className="w-4 h-4" />
+                            Baixar meu PDF
+                          </a>
+                        ) : (
+                          <p className="text-xs text-red-600">Arquivo indisponível no momento. Entre em contato com o suporte.</p>
+                        )}
+                      </div>
                     ) : (
-                      <div className="w-60 h-60 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+                      <>
+                        {qrSrc ? (
+                          <img
+                            src={qrSrc}
+                            alt="QR Code Pix"
+                            className="w-60 h-60 mx-auto border border-neutral-200 rounded"
+                            onError={(e) => {
+                              const img = e.currentTarget;
+                              if (fallback && img.src !== fallback) img.src = fallback;
+                            }}
+                          />
+                        ) : (
+                          <div className="w-60 h-60 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+                        )}
+                        <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código Pix abaixo</p>
+                        <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700 text-left">
+                          {pixData.pix_code}
+                        </div>
+                        <button onClick={copyPix} className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-3 rounded transition">
+                          <Copy className="w-4 h-4" />
+                          {copied ? "Código copiado!" : "Copiar código Pix"}
+                        </button>
+                        <div className="flex items-center justify-center gap-2 text-xs text-neutral-500">
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Aguardando pagamento...
+                        </div>
+                      </>
                     )}
-                    <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código Pix abaixo</p>
-                    <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700 text-left">
-                      {pixData.pix_code}
-                    </div>
-                    <button onClick={copyPix} className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-3 rounded transition">
-                      <Copy className="w-4 h-4" />
-                      {copied ? "Código copiado!" : "Copiar código Pix"}
-                    </button>
-                    <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
                   </div>
                 </div>
               </div>

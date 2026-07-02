@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
-import { Video, Image as ImageIcon, Users, Star, Images, LogOut, ShoppingBag } from "lucide-react";
+import { Video, Image as ImageIcon, Users, Star, Images, LogOut, ShoppingBag, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ function AdminLayout() {
     { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },
     { to: "/admin/trabalhos", label: "Mais Imagens", icon: Images },
     { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+    { to: "/admin/arquivo", label: "Arquivo", icon: FileText },
   ] as const;
 
   return (
