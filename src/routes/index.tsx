@@ -124,41 +124,7 @@ function Index() {
           transformar sua vida com Design de Sobrancelhas.
         </p>
 
-        <div className="mt-8 rounded-xl overflow-hidden relative aspect-video bg-black shadow-2xl ring-1 ring-white/5">
-          <img src={heroWoman} alt="Jéssica Soares" className="w-full h-full object-cover" width={1024} height={1024} />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/40" />
-              <div className="text-left">
-                <div className="font-semibold">Sobrancelhas Perfeitas</div>
-                <div className="text-[10px] opacity-80">Jéssica Soares</div>
-              </div>
-            </div>
-            <div className="flex gap-2 items-center">
-              <Volume2 size={16} />
-              <span className="border border-white/50 rounded px-1 text-[9px]">CC</span>
-            </div>
-          </div>
-          <button className="absolute inset-0 flex items-center justify-center" aria-label="Play">
-            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur flex items-center justify-center ring-2 ring-white/30">
-              <Play className="text-white ml-1" size={28} fill="white" />
-            </div>
-          </button>
-          <div className="absolute bottom-0 left-0 right-0 p-2 space-y-2">
-            <div className="flex items-center gap-2 text-[10px] text-white">
-              <span>0:00 / 2:14</span>
-              <div className="flex-1 h-0.5 bg-white/30 rounded">
-                <div className="w-[5%] h-full bg-red-500 rounded" />
-              </div>
-              <Maximize2 size={12} />
-            </div>
-            <div className="flex items-center justify-between text-white">
-              <div className="flex gap-3"><Share2 size={14} /><Clock size={14} /></div>
-              <div className="text-[10px]">YouTube</div>
-            </div>
-          </div>
-        </div>
+        <VideoPlayer />
 
         <div className="mt-10 space-y-1">
           <p className="text-sm text-foreground/70">de R$ 447,00 Por Apenas</p>
