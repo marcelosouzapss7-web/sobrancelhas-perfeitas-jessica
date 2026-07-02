@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Play, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import eyebrowsCollage from "@/assets/eyebrows-collage.jpg";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -46,6 +46,7 @@ function VideoPlayer() {
       });
   }, []);
 
+
   const embed = videoUrl ? toEmbed(videoUrl) : null;
 
   return (
@@ -77,6 +78,36 @@ function VideoPlayer() {
 function GoldText({ children }: { children: React.ReactNode }) {
   return <span className="text-gold">{children}</span>;
 }
+function BannerGallery() {
+  const [banners, setBanners] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("banner_1, banner_2, banner_3")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        const list = [data?.banner_1, data?.banner_2, data?.banner_3].filter(
+          (u): u is string => !!u,
+        );
+        setBanners(list);
+      });
+  }, []);
+
+  if (banners.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {banners.map((url, i) => (
+        <div key={i} className="rounded-2xl overflow-hidden ring-1 ring-gold/30 aspect-square bg-black/40">
+          <img src={url} alt={`Banner ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 function Divider() {
   return (
@@ -172,9 +203,8 @@ function Index() {
           </p>
         </div>
 
-        <div className="mt-8 rounded-2xl overflow-hidden ring-1 ring-gold/30">
-          <img src={eyebrowsCollage} alt="Trabalhos de design de sobrancelha" width={1024} height={1024} loading="lazy" className="w-full" />
-        </div>
+        <BannerGallery />
+
       </section>
 
       <section className="px-5 py-10 max-w-2xl mx-auto text-center">
