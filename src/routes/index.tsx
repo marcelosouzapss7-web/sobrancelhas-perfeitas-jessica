@@ -2,6 +2,41 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Play, MessageCircle, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+function CountdownTimer() {
+  const [t, setT] = useState({ h: 23, m: 59, s: 59 });
+  useEffect(() => {
+    const id = setInterval(() => {
+      setT((prev) => {
+        let { h, m, s } = prev;
+        s -= 1;
+        if (s < 0) { s = 59; m -= 1; }
+        if (m < 0) { m = 59; h -= 1; }
+        if (h < 0) { h = 0; m = 0; s = 0; }
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const Box = ({ v, u }: { v: number; u: string }) => (
+    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md bg-gradient-to-b from-gold-light to-gold text-black flex items-end justify-center relative">
+      <span className="font-serif text-4xl sm:text-5xl font-bold leading-none pb-2">{pad(v)}</span>
+      <span className="absolute bottom-2 right-2 text-xs font-semibold">{u}</span>
+    </div>
+  );
+  return (
+    <div className="mt-6 flex items-center justify-center gap-2">
+      <Box v={t.h} u="H" /><Box v={t.m} u="M" /><Box v={t.s} u="S" />
+    </div>
+  );
+}
 
 
 export const Route = createFileRoute("/")({
