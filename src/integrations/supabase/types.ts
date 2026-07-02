@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      avaliacoes: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          storage_path: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          storage_path?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          storage_path?: string | null
+        }
+        Relationships: []
+      }
       referencias: {
         Row: {
           created_at: string
