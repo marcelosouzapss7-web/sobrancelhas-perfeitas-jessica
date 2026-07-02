@@ -57,9 +57,11 @@ function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [document_, setDocument] = useState("");
   const [loading, setLoading] = useState(false);
-  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string } | null>(null);
+  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string; hash: string } | null>(null);
   const [pixError, setPixError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [pixPaid, setPixPaid] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   // Campos do cartão
   const [cardNumber, setCardNumber] = useState("");
