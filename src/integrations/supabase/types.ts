@@ -128,6 +128,7 @@ export type Database = {
           banner_2: string | null
           banner_3: string | null
           id: string
+          product_file_path: string | null
           singleton: boolean
           updated_at: string
           video_url: string | null
@@ -137,6 +138,7 @@ export type Database = {
           banner_2?: string | null
           banner_3?: string | null
           id?: string
+          product_file_path?: string | null
           singleton?: boolean
           updated_at?: string
           video_url?: string | null
@@ -146,6 +148,7 @@ export type Database = {
           banner_2?: string | null
           banner_3?: string | null
           id?: string
+          product_file_path?: string | null
           singleton?: boolean
           updated_at?: string
           video_url?: string | null
