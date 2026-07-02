@@ -303,22 +303,70 @@ function CheckoutPage() {
             <span>Pix</span>
           </button>
 
-          {method === "card" && (
+          {method === "card" && !cardSaved && (
             <div className="space-y-3 pt-2">
-              <div className="rounded border border-yellow-300 bg-yellow-50 text-yellow-900 text-xs px-3 py-2">
-                No momento aceitamos pagamento apenas via <strong>Pix</strong>. Selecione a opção Pix para concluir a compra.
-              </div>
-              <input disabled type="text" placeholder="Número do cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
-              <input disabled type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              {cardError && (
+                <div className="rounded border border-red-300 bg-red-50 text-red-700 text-xs px-3 py-2">{cardError}</div>
+              )}
+              <input
+                type="text"
+                inputMode="numeric"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                placeholder="Número do cartão"
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+              />
+              <input
+                type="text"
+                value={cardHolder}
+                onChange={(e) => setCardHolder(e.target.value)}
+                placeholder="Nome impresso no cartão"
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+              />
               <div className="grid grid-cols-2 gap-2">
-                <input disabled type="text" placeholder="MM/AA" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
-                <input disabled type="text" placeholder="CVV" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+                <input
+                  type="text"
+                  value={cardExpiry}
+                  onChange={(e) => setCardExpiry(e.target.value)}
+                  placeholder="MM/AA"
+                  className="border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+                />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={cardCvv}
+                  onChange={(e) => setCardCvv(e.target.value)}
+                  placeholder="CVV"
+                  className="border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+                />
               </div>
-              <button disabled className="w-full bg-neutral-300 text-neutral-500 font-bold py-3 rounded cursor-not-allowed">
-                Indisponível
+              <select
+                value={installments}
+                onChange={(e) => setInstallments(Number(e.target.value))}
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm"
+              >
+                <option value={12}>12x de R$ 8,33 sem juros</option>
+                <option value={1}>À vista R$ 99,90</option>
+              </select>
+              <button
+                onClick={handleSubmitCard}
+                disabled={cardLoading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-70 text-white font-bold py-3 rounded transition flex items-center justify-center gap-2"
+              >
+                {cardLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {cardLoading ? "Enviando..." : "Finalizar compra"}
               </button>
             </div>
           )}
+
+          {method === "card" && cardSaved && (
+            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-2">
+              <CheckCircle2 className="w-10 h-10 text-green-600 mx-auto" />
+              <p className="text-sm font-semibold">Pedido recebido!</p>
+              <p className="text-xs text-neutral-600">Enviaremos as instruções de acesso para {email}.</p>
+            </div>
+          )}
+
 
           {method === "pix" && !pixData && (
             <>
