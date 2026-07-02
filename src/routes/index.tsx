@@ -286,6 +286,83 @@ function Index() {
         </div>
       </section>
 
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <h2 className="font-serif text-2xl uppercase tracking-wide">
+          Veja o que você vai <GoldText>aprender!</GoldText>
+        </h2>
+        <Divider />
+        <ul className="mt-6 space-y-3 text-left">
+          {[
+            "Anatomia da Pele",
+            "Anatomia do Pelo",
+            "Tipos de Rosto",
+            "Tipos de Olhos",
+            "Tipos de Pinça",
+            "Conduta do Profissional",
+            "Como age a Henna e a Tintura",
+            "Durabilidade da Henna e Tintura",
+            "Treino de Design",
+            "Treino de Aplicação de Henna",
+            "Epilação Egípcia Facial",
+            "Como Escolher o Tom Ideal de Henna",
+            "Oxidação de Henna",
+            "Design Masculino",
+            "Teste de Alergia",
+            "Ficha de Anamnese",
+            "Aplicação de Tintura Masculina",
+            "Cuidados pós Henna e Tintura",
+            "Biossegurança",
+            "Como Encontrar o Ponto Inicial",
+            "Como Encontrar o Ponto Alto",
+            "Como Encontrar o Ponto Final",
+            "Espessura Ideal de Sobrancelha",
+            "Mapeamento com Linha",
+            "Marcação à Mão Livre",
+            "Design em Sobrancelhas Retas",
+            "Design Sobrancelhas Falhadas",
+            "Design em Sobrancelhas Finas",
+            "Design em Adolescente",
+            "Protocolo Henna + Tintura",
+            "Como Cortar Sobrancelhas Onduladas",
+            "Técnica da Epilação com linha",
+            "Design Feminino com Linha e Pinça",
+            "Henna Ombré",
+            "Preparação e Aplicação Henna SourCil",
+            "Preparação e Aplicação Henna Menela",
+            "Preparação e Aplicação La Benig",
+            "Aplicação de Tintura Urbanique",
+            "Tintura Refectocil em Pelos Grisalhos",
+            "Alinhamento Perfeito",
+            "Correção com Lápis",
+            "Treino de Marcação no Papel",
+            "Treino de Henna",
+            "Fornecedores",
+          ].map((item) => (
+            <li
+              key={item}
+              className="flex items-center gap-3 border-l-4 border-gold bg-card/60 rounded-md px-4 py-3 text-sm"
+            >
+              <CheckCircle2 size={18} className="text-gold shrink-0" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-8 font-serif text-xl tracking-wide">E MUITO MAIS...</p>
+
+        <div className="flex justify-center mt-6">
+          <GoldButton>Sim, quero começar agora!</GoldButton>
+        </div>
+      </section>
+
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <h2 className="font-serif text-xl uppercase tracking-wide leading-snug">
+          Está pronta para fazer trabalhos <GoldText>incríveis como esses?</GoldText>
+        </h2>
+        <Divider />
+      </section>
+
+
       <footer className="text-center py-8 text-xs text-foreground/50">
         © {new Date().getFullYear()} Sobrancelhas Perfeitas
       </footer>
