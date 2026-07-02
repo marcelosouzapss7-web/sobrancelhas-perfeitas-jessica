@@ -195,8 +195,29 @@ function CheckoutPage() {
       /* ignore */
     }
   };
-
-
+  // Polling do status do Pix na IronPay a cada 5s
+  useEffect(() => {
+    if (!pixData?.hash || pixPaid) return;
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const r = await checkPixStatus({ data: { hash: pixData.hash } });
+        if (cancelled) return;
+        if (r.paid) {
+          setPixPaid(true);
+          setDownloadUrl(r.download_url);
+          if (pixData.hash) {
+            await supabase.from("pedidos").update({ status: "paid" } as never).eq("pix_hash", pixData.hash);
+          }
+        }
+      } catch {
+        /* silencioso */
+      }
+    };
+    tick();
+    const id = setInterval(tick, 5000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [pixData?.hash, pixPaid, checkPixStatus]);
 
 
   return (
