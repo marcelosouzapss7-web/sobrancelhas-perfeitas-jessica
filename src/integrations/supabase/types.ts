@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      referencias: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          storage_path: string | null
+          subtitle: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          storage_path?: string | null
+          subtitle?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          storage_path?: string | null
+          subtitle?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           banner_1: string | null
