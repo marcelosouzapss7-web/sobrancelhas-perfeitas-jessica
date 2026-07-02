@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminVideoRouteImport } from './routes/_authenticated/admin.video'
+import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_authenticated/admin.referencias'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
 
 const AuthRoute = AuthRouteImport.update({
@@ -40,6 +41,12 @@ const AuthenticatedAdminVideoRoute = AuthenticatedAdminVideoRouteImport.update({
   path: '/video',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminReferenciasRoute =
+  AuthenticatedAdminReferenciasRouteImport.update({
+    id: '/referencias',
+    path: '/referencias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBannerRoute =
   AuthenticatedAdminBannerRouteImport.update({
     id: '/banner',
@@ -52,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRoutesByTo {
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRoutesById {
@@ -68,13 +77,26 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/_authenticated/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/_authenticated/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/admin' | '/admin/banner' | '/admin/video'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/admin/banner'
+    | '/admin/referencias'
+    | '/admin/video'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin' | '/admin/banner' | '/admin/video'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/admin/banner'
+    | '/admin/referencias'
+    | '/admin/video'
   id:
     | '__root__'
     | '/'
@@ -82,6 +104,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/admin'
     | '/_authenticated/admin/banner'
+    | '/_authenticated/admin/referencias'
     | '/_authenticated/admin/video'
   fileRoutesById: FileRoutesById
 }
@@ -128,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVideoRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/referencias': {
+      id: '/_authenticated/admin/referencias'
+      path: '/referencias'
+      fullPath: '/admin/referencias'
+      preLoaderRoute: typeof AuthenticatedAdminReferenciasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/banner': {
       id: '/_authenticated/admin/banner'
       path: '/banner'
@@ -140,11 +170,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
+  AuthenticatedAdminReferenciasRoute: typeof AuthenticatedAdminReferenciasRoute
   AuthenticatedAdminVideoRoute: typeof AuthenticatedAdminVideoRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
+  AuthenticatedAdminReferenciasRoute: AuthenticatedAdminReferenciasRoute,
   AuthenticatedAdminVideoRoute: AuthenticatedAdminVideoRoute,
 }
 
