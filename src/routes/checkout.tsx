@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { createIronpayPix } from "@/lib/ironpay.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
