@@ -1,11 +1,78 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Play, Volume2, Maximize2, Share2, Clock, MessageCircle } from "lucide-react";
-import heroWoman from "@/assets/hero-woman.jpg";
+import { Play, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import eyebrowsCollage from "@/assets/eyebrows-collage.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
+
+function toEmbed(url: string): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) {
+      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+    }
+    if (u.hostname.includes("youtube.com")) {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+      if (u.pathname.startsWith("/embed/")) return url;
+    }
+    if (u.hostname.includes("vimeo.com")) {
+      const id = u.pathname.split("/").filter(Boolean)[0];
+      if (id) return `https://player.vimeo.com/video/${id}`;
+    }
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+function VideoPlayer() {
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("video_url")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        setVideoUrl(data?.video_url ?? null);
+        setLoaded(true);
+      });
+  }, []);
+
+  const embed = videoUrl ? toEmbed(videoUrl) : null;
+
+  return (
+    <div className="mt-8 rounded-xl overflow-hidden relative aspect-video bg-black shadow-2xl ring-1 ring-white/5">
+      {embed ? (
+        <iframe
+          src={embed}
+          title="Vídeo"
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-white/60 text-sm">
+          {loaded ? (
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                <Play size={28} className="ml-1" />
+              </div>
+              <span>Vídeo em breve</span>
+            </div>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function GoldText({ children }: { children: React.ReactNode }) {
   return <span className="text-gold">{children}</span>;
