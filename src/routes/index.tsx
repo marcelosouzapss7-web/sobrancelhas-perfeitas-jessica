@@ -390,6 +390,68 @@ function Index() {
         <TrabalhosGallery />
       </section>
 
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <h2 className="font-serif text-xl uppercase tracking-wide leading-snug">
+          Adquira hoje e receba <GoldText>05 bônus especiais!</GoldText>
+        </h2>
+        <Divider />
+
+        <div className="mt-8 space-y-6">
+          {[
+            {
+              n: "01",
+              title: "SUPORTE DIRETO COM A PROFESSORA ONLINE",
+              desc: "Você terá acesso direto comigo para ter suporte e tirar suas dúvidas.",
+              price: "Custa R$ 997,00",
+            },
+            {
+              n: "02",
+              title: "EPILAÇÃO EGÍPCIA",
+              desc: "Aprenda a fazer de forma profissional a técnica de epilação com a linha.",
+              price: "Custa R$ 147,00",
+            },
+            {
+              n: "03",
+              title: "DESCOLORAÇÃO E COLORAÇÃO EM RUIVAS",
+              desc: "Técnica de como colorir e descolorir perfeitamente.",
+              price: "Custa R$ 37,00",
+            },
+            {
+              n: "04",
+              title: "CORREÇÃO COM LÁPIS DERMATOGRÁFICO",
+              desc: "Como corrigir corretamente sobrancelhas com falhas pontuais.",
+              price: "Custa R$ 27,00",
+            },
+            {
+              n: "05",
+              title: "COMO FAZER A FOTOGRAFIA PERFEITA",
+              desc: "Aprenda a fazer de forma profissional Fotografias Perfeitas para a Divulgação de seus Trabalhos.",
+              price: "Custa R$ 37,00",
+            },
+          ].map((b) => (
+            <div
+              key={b.n}
+              className="rounded-2xl bg-card/60 border border-gold/20 p-6 text-left"
+            >
+              <div className="flex justify-center -mt-10 mb-5">
+                <div className="px-8 py-2 rounded-full border border-gold bg-black">
+                  <span className="font-serif text-gold text-lg">Bônus {b.n}</span>
+                </div>
+              </div>
+              <h3 className="font-serif text-gold text-lg uppercase tracking-wide mb-3">
+                {b.title}
+              </h3>
+              <p className="text-sm text-foreground/85 leading-relaxed mb-4">{b.desc}</p>
+              <p className="text-sm line-through text-red-500">{b.price}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <GoldButton>Sim, quero começar agora!</GoldButton>
+        </div>
+      </section>
+
 
       <footer className="text-center py-8 text-xs text-foreground/50">
         © {new Date().getFullYear()} Sobrancelhas Perfeitas
