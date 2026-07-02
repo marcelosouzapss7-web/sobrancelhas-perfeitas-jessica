@@ -108,6 +108,46 @@ function BannerGallery() {
   );
 }
 
+type Ref = { id: string; image_url: string; username: string | null; subtitle: string | null };
+
+function ReferenciasGallery() {
+  const [items, setItems] = useState<Ref[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("referencias")
+      .select("id, image_url, username, subtitle")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }) => setItems((data ?? []) as Ref[]));
+  }, []);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+      {items.map((r) => (
+        <article key={r.id} className="rounded-2xl overflow-hidden bg-white text-black shadow-xl ring-1 ring-gold/20">
+          <header className="flex items-center gap-3 px-3 py-2 border-b border-black/10">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                <img src={r.image_url} alt="" className="w-full h-full object-cover" />
+              </div>
+            </div>
+            <div className="text-left min-w-0">
+              <p className="text-sm font-semibold truncate">{r.username ?? ""}</p>
+              {r.subtitle && <p className="text-[11px] text-black/60 truncate">{r.subtitle}</p>}
+            </div>
+          </header>
+          <div className="aspect-square bg-black/5">
+            <img src={r.image_url} alt={r.username ?? "Aluna"} loading="lazy" className="w-full h-full object-cover" />
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 
 function Divider() {
   return (
@@ -212,7 +252,8 @@ function Index() {
           Alunas estão tendo <GoldText>a vida transformada!</GoldText>
         </h2>
         <Divider />
-        <div className="flex justify-center mt-4">
+        <ReferenciasGallery />
+        <div className="flex justify-center mt-8">
           <GoldButton>Sim, quero começar agora!</GoldButton>
         </div>
       </section>
