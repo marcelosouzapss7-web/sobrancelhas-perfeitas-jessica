@@ -262,12 +262,12 @@ function ProVoceCard({ text }: { text: string }) {
 
 function GoldButton({ children }: { children: React.ReactNode }) {
   return (
-    <button className="relative group">
+    <Link to="/checkout" className="relative group inline-block">
       <div className="absolute inset-0 bg-gradient-to-b from-gold-light to-gold rounded-full blur-md opacity-70" />
       <div className="relative bg-gradient-to-b from-gold-light via-gold to-yellow-700 text-black font-semibold px-10 py-4 rounded-full border border-yellow-200 shadow-xl">
         {children}
       </div>
-    </button>
+    </Link>
   );
 }
 
