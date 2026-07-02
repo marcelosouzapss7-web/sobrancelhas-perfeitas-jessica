@@ -78,6 +78,36 @@ function VideoPlayer() {
 function GoldText({ children }: { children: React.ReactNode }) {
   return <span className="text-gold">{children}</span>;
 }
+function BannerGallery() {
+  const [banners, setBanners] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("banner_1, banner_2, banner_3")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        const list = [data?.banner_1, data?.banner_2, data?.banner_3].filter(
+          (u): u is string => !!u,
+        );
+        setBanners(list);
+      });
+  }, []);
+
+  if (banners.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {banners.map((url, i) => (
+        <div key={i} className="rounded-2xl overflow-hidden ring-1 ring-gold/30 aspect-square bg-black/40">
+          <img src={url} alt={`Banner ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 function Divider() {
   return (
