@@ -46,6 +46,7 @@ function VideoPlayer() {
       });
   }, []);
 
+
   const embed = videoUrl ? toEmbed(videoUrl) : null;
 
   return (
