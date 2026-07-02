@@ -50,7 +50,74 @@ function TopTimer() {
 function CheckoutPage() {
   const [method, setMethod] = useState<"card" | "pix">("pix");
   const [couponOpen, setCouponOpen] = useState(false);
-  const [generated, setGenerated] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailConfirm, setEmailConfirm] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [document_, setDocument] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string } | null>(null);
+  const [pixError, setPixError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const createPix = useServerFn(createIronpayPix);
+
+  const handleGeneratePix = async () => {
+    setPixError(null);
+    if (!email || email !== emailConfirm) {
+      setPixError("Confirme o mesmo e-mail nos dois campos.");
+      return;
+    }
+    if (!name.trim() || name.trim().length < 3) {
+      setPixError("Informe seu nome completo.");
+      return;
+    }
+    const cleanPhone = phone.replace(/\D/g, "");
+    const cleanDoc = document_.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      setPixError("Informe um celular válido (DDD + número).");
+      return;
+    }
+    if (cleanDoc.length !== 11 && cleanDoc.length !== 14) {
+      setPixError("Informe um CPF ou CNPJ válido.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await createPix({
+        data: {
+          amount: 9990, // R$ 99,90 em centavos
+          customer: {
+            name: name.trim(),
+            email: email.trim(),
+            phone_number: cleanPhone,
+            document: cleanDoc,
+          },
+        },
+      });
+      if (!res.success) {
+        setPixError(res.error);
+      } else {
+        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+      }
+    } catch (e) {
+      setPixError("Erro inesperado. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyPix = async () => {
+    if (!pixData) return;
+    try {
+      await navigator.clipboard.writeText(pixData.pix_code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
