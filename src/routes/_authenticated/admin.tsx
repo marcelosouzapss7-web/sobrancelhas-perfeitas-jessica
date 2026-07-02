@@ -30,6 +30,7 @@ function AdminLayout() {
     { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },
     { to: "/admin/trabalhos", label: "Mais Imagens", icon: Images },
     { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+    { to: "/admin/arquivo", label: "Arquivo", icon: FileText },
   ] as const;
 
   return (
