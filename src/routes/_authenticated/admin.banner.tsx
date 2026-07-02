@@ -16,17 +16,17 @@ const SLOTS: { key: SlotKey; label: string }[] = [
   { key: "banner_3", label: "Imagem 3" },
 ];
 
-function load(): Promise<Record<SlotKey, string | null> & { id?: string }> {
-  return supabase
+async function load(): Promise<{ id?: string; banner_1: string | null; banner_2: string | null; banner_3: string | null }> {
+  const { data } = await supabase
     .from("site_settings")
     .select("id, banner_1, banner_2, banner_3")
-    .maybeSingle()
-    .then(({ data }) => ({
-      id: data?.id,
-      banner_1: data?.banner_1 ?? null,
-      banner_2: data?.banner_2 ?? null,
-      banner_3: data?.banner_3 ?? null,
-    }));
+    .maybeSingle();
+  return {
+    id: data?.id,
+    banner_1: data?.banner_1 ?? null,
+    banner_2: data?.banner_2 ?? null,
+    banner_3: data?.banner_3 ?? null,
+  };
 }
 
 function BannerAdmin() {
@@ -63,10 +63,11 @@ function BannerAdmin() {
       if (signErr) throw signErr;
       const url = signed.signedUrl;
 
-      const payload = { [slot]: url, updated_at: new Date().toISOString() };
+      const payload: Record<string, string> = { updated_at: new Date().toISOString() };
+      payload[slot] = url;
       const { error: dbErr } = rowId
-        ? await supabase.from("site_settings").update(payload).eq("id", rowId)
-        : await supabase.from("site_settings").insert(payload);
+        ? await supabase.from("site_settings").update(payload as never).eq("id", rowId)
+        : await supabase.from("site_settings").insert(payload as never);
       if (dbErr) throw dbErr;
 
       setState((s) => ({ ...s, [slot]: url }));
