@@ -173,9 +173,8 @@ function Index() {
           </p>
         </div>
 
-        <div className="mt-8 rounded-2xl overflow-hidden ring-1 ring-gold/30">
-          <img src={eyebrowsCollage} alt="Trabalhos de design de sobrancelha" width={1024} height={1024} loading="lazy" className="w-full" />
-        </div>
+        <BannerGallery />
+
       </section>
 
       <section className="px-5 py-10 max-w-2xl mx-auto text-center">
