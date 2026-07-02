@@ -384,24 +384,32 @@ function CheckoutPage() {
             </>
           )}
 
-          {method === "pix" && pixData && (
-            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-3">
-              {pixData.qr_code?.startsWith("data:image") ? (
-                <img src={pixData.qr_code} alt="QR Code Pix" className="w-52 h-52 mx-auto" />
-              ) : (
-                <div className="w-52 h-52 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
-              )}
-              <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código abaixo</p>
-              <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700">
-                {pixData.pix_code}
+          {method === "pix" && pixData && (() => {
+            const raw = pixData.qr_code?.trim() || "";
+            let qrSrc = "";
+            if (raw.startsWith("data:image")) qrSrc = raw;
+            else if (raw.startsWith("http")) qrSrc = raw;
+            else if (raw.length > 100 && /^[A-Za-z0-9+/=\s]+$/.test(raw)) qrSrc = `data:image/png;base64,${raw.replace(/\s/g, "")}`;
+            else if (pixData.pix_code) qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(pixData.pix_code)}`;
+            return (
+              <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-3">
+                {qrSrc ? (
+                  <img src={qrSrc} alt="QR Code Pix" className="w-52 h-52 mx-auto" />
+                ) : (
+                  <div className="w-52 h-52 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+                )}
+                <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código abaixo</p>
+                <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700">
+                  {pixData.pix_code}
+                </div>
+                <button onClick={copyPix} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
+                  <Copy className="w-4 h-4" />
+                  {copied ? "Copiado!" : "Copiar código Pix"}
+                </button>
+                <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
               </div>
-              <button onClick={copyPix} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
-                <Copy className="w-4 h-4" />
-                {copied ? "Copiado!" : "Copiar código Pix"}
-              </button>
-              <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
-            </div>
-          )}
+            );
+          })()}
 
 
           <p className="text-center text-xs text-neutral-500 pt-1">Protegido por <span className="font-bold">🔥 hotmart</span></p>
