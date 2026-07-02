@@ -59,26 +59,29 @@ export const createIronpayPix = createServerFn({ method: "POST" })
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(body),
       });
-      const json = (await res.json()) as {
-        success?: boolean;
-        message?: string;
-        data?: {
-          hash: string;
-          qr_code: string;
-          pix_code: string;
-          expires_at?: string;
-        };
-      };
-      if (!res.ok || !json?.data?.pix_code) {
+      const json = (await res.json()) as any;
+      const root = json?.data ?? json;
+      const pix = root?.pix ?? {};
+      const pixCode: string | undefined = pix.pix_qr_code ?? pix.pix_code ?? root?.pix_code;
+      const qrBase64: string | undefined = pix.qr_code_base64 ?? root?.qr_code_base64;
+      const pixUrl: string | undefined = pix.pix_url ?? root?.pix_url;
+      const hash: string = root?.hash ?? root?.transaction ?? "";
+
+      if (!res.ok || !pixCode) {
         console.error("IronPay error", res.status, json);
         return { success: false, error: json?.message ?? `Erro IronPay (${res.status})` };
       }
+
+      const qr = qrBase64
+        ? (qrBase64.startsWith("data:") ? qrBase64 : `data:image/png;base64,${qrBase64}`)
+        : (pixUrl ?? "");
+
       return {
         success: true,
-        hash: json.data.hash,
-        qr_code: json.data.qr_code,
-        pix_code: json.data.pix_code,
-        expires_at: json.data.expires_at,
+        hash,
+        qr_code: qr,
+        pix_code: pixCode,
+        expires_at: root?.expires_at,
       };
     } catch (err) {
       console.error("IronPay request failed", err);
