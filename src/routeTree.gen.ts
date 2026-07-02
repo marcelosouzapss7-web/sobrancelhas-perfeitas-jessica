@@ -16,6 +16,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminVideoRouteImport } from './routes/_authenticated/admin.video'
 import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_authenticated/admin.referencias'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
+import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -53,11 +54,18 @@ const AuthenticatedAdminBannerRoute =
     path: '/banner',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAvaliacoesRoute =
+  AuthenticatedAdminAvaliacoesRouteImport.update({
+    id: '/avaliacoes',
+    path: '/avaliacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/_authenticated/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/_authenticated/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/admin'
+    | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/referencias'
     | '/admin/video'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/admin'
+    | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/referencias'
     | '/admin/video'
@@ -103,6 +115,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/admin'
+    | '/_authenticated/admin/avaliacoes'
     | '/_authenticated/admin/banner'
     | '/_authenticated/admin/referencias'
     | '/_authenticated/admin/video'
@@ -165,16 +178,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBannerRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/avaliacoes': {
+      id: '/_authenticated/admin/avaliacoes'
+      path: '/avaliacoes'
+      fullPath: '/admin/avaliacoes'
+      preLoaderRoute: typeof AuthenticatedAdminAvaliacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
   AuthenticatedAdminReferenciasRoute: typeof AuthenticatedAdminReferenciasRoute
   AuthenticatedAdminVideoRoute: typeof AuthenticatedAdminVideoRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
   AuthenticatedAdminReferenciasRoute: AuthenticatedAdminReferenciasRoute,
   AuthenticatedAdminVideoRoute: AuthenticatedAdminVideoRoute,
