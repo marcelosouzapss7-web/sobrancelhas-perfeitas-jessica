@@ -151,15 +151,19 @@ function CheckoutPage() {
           <h3 className="font-bold text-base">Dados pessoais</h3>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Seu email</label>
-            <input type="email" placeholder="Digite seu email para receber a compra" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu email para receber a compra" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Confirme seu email</label>
-            <input type="email" placeholder="Digite novamente seu email" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="email" value={emailConfirm} onChange={(e) => setEmailConfirm(e.target.value)} placeholder="Digite novamente seu email" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Nome completo</label>
-            <input type="text" placeholder="Digite seu nome completo" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Digite seu nome completo" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+          </div>
+          <div>
+            <label className="text-xs text-neutral-600 block mb-1">CPF ou CNPJ</label>
+            <input type="text" value={document_} onChange={(e) => setDocument(e.target.value)} placeholder="Somente números" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Celular</label>
@@ -168,9 +172,10 @@ function CheckoutPage() {
                 <span className="text-[10px] font-bold bg-neutral-200 px-1 rounded">BR</span>
                 +55 <ChevronDown className="w-3 h-3" />
               </div>
-              <input type="tel" className="flex-1 border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(DDD) 99999-9999" className="flex-1 border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
             </div>
           </div>
+
         </div>
 
         {/* Cupom */}
