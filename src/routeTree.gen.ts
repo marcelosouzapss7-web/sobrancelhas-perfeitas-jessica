@@ -17,6 +17,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminVideoRouteImport } from './routes/_authenticated/admin.video'
 import { Route as AuthenticatedAdminTrabalhosRouteImport } from './routes/_authenticated/admin.trabalhos'
 import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_authenticated/admin.referencias'
+import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
 import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
 
@@ -61,6 +62,12 @@ const AuthenticatedAdminReferenciasRoute =
     path: '/referencias',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPedidosRoute =
+  AuthenticatedAdminPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBannerRoute =
   AuthenticatedAdminBannerRouteImport.update({
     id: '/banner',
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -105,6 +114,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/_authenticated/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/_authenticated/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/_authenticated/admin/video': typeof AuthenticatedAdminVideoRoute
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/avaliacoes'
     | '/admin/banner'
+    | '/admin/pedidos'
     | '/admin/referencias'
     | '/admin/trabalhos'
     | '/admin/video'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/avaliacoes'
     | '/admin/banner'
+    | '/admin/pedidos'
     | '/admin/referencias'
     | '/admin/trabalhos'
     | '/admin/video'
@@ -141,6 +153,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/admin/avaliacoes'
     | '/_authenticated/admin/banner'
+    | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/referencias'
     | '/_authenticated/admin/trabalhos'
     | '/_authenticated/admin/video'
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReferenciasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/pedidos': {
+      id: '/_authenticated/admin/pedidos'
+      path: '/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/banner': {
       id: '/_authenticated/admin/banner'
       path: '/banner'
@@ -231,6 +251,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
+  AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
   AuthenticatedAdminReferenciasRoute: typeof AuthenticatedAdminReferenciasRoute
   AuthenticatedAdminTrabalhosRoute: typeof AuthenticatedAdminTrabalhosRoute
   AuthenticatedAdminVideoRoute: typeof AuthenticatedAdminVideoRoute
@@ -239,6 +260,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
+  AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
   AuthenticatedAdminReferenciasRoute: AuthenticatedAdminReferenciasRoute,
   AuthenticatedAdminTrabalhosRoute: AuthenticatedAdminTrabalhosRoute,
   AuthenticatedAdminVideoRoute: AuthenticatedAdminVideoRoute,
