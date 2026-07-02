@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { createIronpayPix } from "@/lib/ironpay.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -48,7 +50,74 @@ function TopTimer() {
 function CheckoutPage() {
   const [method, setMethod] = useState<"card" | "pix">("pix");
   const [couponOpen, setCouponOpen] = useState(false);
-  const [generated, setGenerated] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailConfirm, setEmailConfirm] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [document_, setDocument] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [pixData, setPixData] = useState<{ qr_code: string; pix_code: string } | null>(null);
+  const [pixError, setPixError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const createPix = useServerFn(createIronpayPix);
+
+  const handleGeneratePix = async () => {
+    setPixError(null);
+    if (!email || email !== emailConfirm) {
+      setPixError("Confirme o mesmo e-mail nos dois campos.");
+      return;
+    }
+    if (!name.trim() || name.trim().length < 3) {
+      setPixError("Informe seu nome completo.");
+      return;
+    }
+    const cleanPhone = phone.replace(/\D/g, "");
+    const cleanDoc = document_.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      setPixError("Informe um celular válido (DDD + número).");
+      return;
+    }
+    if (cleanDoc.length !== 11 && cleanDoc.length !== 14) {
+      setPixError("Informe um CPF ou CNPJ válido.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await createPix({
+        data: {
+          amount: 9990, // R$ 99,90 em centavos
+          customer: {
+            name: name.trim(),
+            email: email.trim(),
+            phone_number: cleanPhone,
+            document: cleanDoc,
+          },
+        },
+      });
+      if (!res.success) {
+        setPixError(res.error);
+      } else {
+        setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+      }
+    } catch (e) {
+      setPixError("Erro inesperado. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyPix = async () => {
+    if (!pixData) return;
+    try {
+      await navigator.clipboard.writeText(pixData.pix_code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
@@ -82,15 +151,19 @@ function CheckoutPage() {
           <h3 className="font-bold text-base">Dados pessoais</h3>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Seu email</label>
-            <input type="email" placeholder="Digite seu email para receber a compra" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu email para receber a compra" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Confirme seu email</label>
-            <input type="email" placeholder="Digite novamente seu email" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="email" value={emailConfirm} onChange={(e) => setEmailConfirm(e.target.value)} placeholder="Digite novamente seu email" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Nome completo</label>
-            <input type="text" placeholder="Digite seu nome completo" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Digite seu nome completo" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+          </div>
+          <div>
+            <label className="text-xs text-neutral-600 block mb-1">CPF ou CNPJ</label>
+            <input type="text" value={document_} onChange={(e) => setDocument(e.target.value)} placeholder="Somente números" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
           </div>
           <div>
             <label className="text-xs text-neutral-600 block mb-1">Celular</label>
@@ -99,9 +172,10 @@ function CheckoutPage() {
                 <span className="text-[10px] font-bold bg-neutral-200 px-1 rounded">BR</span>
                 +55 <ChevronDown className="w-3 h-3" />
               </div>
-              <input type="tel" className="flex-1 border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(DDD) 99999-9999" className="flex-1 border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500" />
             </div>
           </div>
+
         </div>
 
         {/* Cupom */}
@@ -129,7 +203,7 @@ function CheckoutPage() {
 
           <button
             type="button"
-            onClick={() => { setMethod("card"); setGenerated(false); }}
+            onClick={() => { setMethod("card"); setPixData(null); setPixError(null); }}
             className={`w-full border rounded px-3 py-3 flex items-center gap-3 text-sm transition ${method === "card" ? "border-neutral-900 border-2" : "border-neutral-300"}`}
           >
             <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === "card" ? "border-neutral-900" : "border-neutral-400"}`}>
@@ -141,7 +215,7 @@ function CheckoutPage() {
 
           <button
             type="button"
-            onClick={() => { setMethod("pix"); setGenerated(false); }}
+            onClick={() => { setMethod("pix"); setPixError(null); }}
             className={`w-full border rounded px-3 py-3 flex items-center gap-3 text-sm transition ${method === "pix" ? "border-neutral-900 border-2" : "border-neutral-300"}`}
           >
             <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === "pix" ? "border-neutral-900" : "border-neutral-400"}`}>
@@ -155,42 +229,56 @@ function CheckoutPage() {
 
           {method === "card" && (
             <div className="space-y-3 pt-2">
-              <input type="text" placeholder="Número do cartão" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm" />
-              <input type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm" />
-              <div className="grid grid-cols-2 gap-2">
-                <input type="text" placeholder="MM/AA" className="border border-neutral-300 rounded px-3 py-2 text-sm" />
-                <input type="text" placeholder="CVV" className="border border-neutral-300 rounded px-3 py-2 text-sm" />
+              <div className="rounded border border-yellow-300 bg-yellow-50 text-yellow-900 text-xs px-3 py-2">
+                No momento aceitamos pagamento apenas via <strong>Pix</strong>. Selecione a opção Pix para concluir a compra.
               </div>
-              <select className="w-full border border-neutral-300 rounded px-3 py-2 text-sm">
-                <option>12x de R$ 8,33 sem juros</option>
-                <option>À vista R$ 99,90</option>
-              </select>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition">
-                Finalizar compra
+              <input disabled type="text" placeholder="Número do cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              <input disabled type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              <div className="grid grid-cols-2 gap-2">
+                <input disabled type="text" placeholder="MM/AA" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+                <input disabled type="text" placeholder="CVV" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              </div>
+              <button disabled className="w-full bg-neutral-300 text-neutral-500 font-bold py-3 rounded cursor-not-allowed">
+                Indisponível
               </button>
             </div>
           )}
 
-          {method === "pix" && !generated && (
-            <button
-              onClick={() => setGenerated(true)}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition mt-2"
-            >
-              Gerar Pix
-            </button>
+          {method === "pix" && !pixData && (
+            <>
+              {pixError && (
+                <div className="rounded border border-red-300 bg-red-50 text-red-700 text-xs px-3 py-2">{pixError}</div>
+              )}
+              <button
+                onClick={handleGeneratePix}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3 rounded transition mt-2 flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Gerando Pix..." : "Gerar Pix"}
+              </button>
+            </>
           )}
 
-          {method === "pix" && generated && (
-            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-2">
-              <div className="w-40 h-40 mx-auto bg-neutral-900 grid grid-cols-8 gap-0.5 p-2">
-                {Array.from({ length: 64 }).map((_, i) => (
-                  <div key={i} className={Math.random() > 0.5 ? "bg-white" : "bg-neutral-900"} />
-                ))}
+          {method === "pix" && pixData && (
+            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-3">
+              {pixData.qr_code?.startsWith("data:image") ? (
+                <img src={pixData.qr_code} alt="QR Code Pix" className="w-52 h-52 mx-auto" />
+              ) : (
+                <div className="w-52 h-52 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+              )}
+              <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código abaixo</p>
+              <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700">
+                {pixData.pix_code}
               </div>
-              <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco</p>
-              <button className="text-xs text-green-700 underline">Copiar código Pix</button>
+              <button onClick={copyPix} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
+                <Copy className="w-4 h-4" />
+                {copied ? "Copiado!" : "Copiar código Pix"}
+              </button>
+              <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
             </div>
           )}
+
 
           <p className="text-center text-xs text-neutral-500 pt-1">Protegido por <span className="font-bold">🔥 hotmart</span></p>
         </div>
