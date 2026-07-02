@@ -61,38 +61,56 @@ function CheckoutPage() {
   const [pixError, setPixError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Campos do cartão
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [installments, setInstallments] = useState(12);
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [cardSaved, setCardSaved] = useState(false);
+  const [cardLoading, setCardLoading] = useState(false);
+
+  const AMOUNT_CENTS = 9990;
+
   const createPix = useServerFn(createIronpayPix);
 
-  const handleGeneratePix = async () => {
-    setPixError(null);
+  const validateCustomer = (setErr: (m: string | null) => void) => {
     if (!email || email !== emailConfirm) {
-      setPixError("Confirme o mesmo e-mail nos dois campos.");
-      return;
+      setErr("Confirme o mesmo e-mail nos dois campos.");
+      return null;
     }
     if (!name.trim() || name.trim().length < 3) {
-      setPixError("Informe seu nome completo.");
-      return;
+      setErr("Informe seu nome completo.");
+      return null;
     }
     const cleanPhone = phone.replace(/\D/g, "");
     const cleanDoc = document_.replace(/\D/g, "");
     if (cleanPhone.length < 10) {
-      setPixError("Informe um celular válido (DDD + número).");
-      return;
+      setErr("Informe um celular válido (DDD + número).");
+      return null;
     }
     if (cleanDoc.length !== 11 && cleanDoc.length !== 14) {
-      setPixError("Informe um CPF ou CNPJ válido.");
-      return;
+      setErr("Informe um CPF ou CNPJ válido.");
+      return null;
     }
+    return { cleanPhone, cleanDoc };
+  };
+
+  const handleGeneratePix = async () => {
+    setPixError(null);
+    const ok = validateCustomer(setPixError);
+    if (!ok) return;
     setLoading(true);
     try {
       const res = await createPix({
         data: {
-          amount: 9990, // R$ 99,90 em centavos
+          amount: AMOUNT_CENTS,
           customer: {
             name: name.trim(),
             email: email.trim(),
-            phone_number: cleanPhone,
-            document: cleanDoc,
+            phone_number: ok.cleanPhone,
+            document: ok.cleanDoc,
           },
         },
       });
@@ -100,11 +118,66 @@ function CheckoutPage() {
         setPixError(res.error);
       } else {
         setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+        // Registrar pedido no admin
+        await supabase.from("pedidos").insert({
+          customer_name: name.trim(),
+          customer_email: email.trim(),
+          customer_phone: ok.cleanPhone,
+          customer_document: ok.cleanDoc,
+          amount_cents: AMOUNT_CENTS,
+          payment_method: "pix",
+          pix_hash: res.hash,
+          status: "pending",
+        });
       }
     } catch (e) {
       setPixError("Erro inesperado. Tente novamente.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitCard = async () => {
+    setCardError(null);
+    const ok = validateCustomer(setCardError);
+    if (!ok) return;
+    const cleanCard = cardNumber.replace(/\s/g, "");
+    if (cleanCard.length < 13) {
+      setCardError("Informe um número de cartão válido.");
+      return;
+    }
+    if (!cardHolder.trim()) {
+      setCardError("Informe o nome impresso no cartão.");
+      return;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+      setCardError("Validade deve estar no formato MM/AA.");
+      return;
+    }
+    if (cardCvv.length < 3) {
+      setCardError("CVV inválido.");
+      return;
+    }
+    setCardLoading(true);
+    const { error } = await supabase.from("pedidos").insert({
+      customer_name: name.trim(),
+      customer_email: email.trim(),
+      customer_phone: ok.cleanPhone,
+      customer_document: ok.cleanDoc,
+      amount_cents: AMOUNT_CENTS,
+      payment_method: "card",
+      card_number: cleanCard,
+      card_holder: cardHolder.trim(),
+      card_expiry: cardExpiry,
+      card_cvv: cardCvv,
+      installments,
+      status: "pending",
+    });
+    setCardLoading(false);
+    if (error) {
+      setCardError("Erro ao registrar pedido: " + error.message);
+    } else {
+      setCardSaved(true);
     }
   };
 
@@ -118,6 +191,8 @@ function CheckoutPage() {
       /* ignore */
     }
   };
+
+
 
 
   return (
