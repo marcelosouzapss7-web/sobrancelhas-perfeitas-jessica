@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminVideoRouteImport } from './routes/_authenticated/admin.video'
+import { Route as AuthenticatedAdminTrabalhosRouteImport } from './routes/_authenticated/admin.trabalhos'
 import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_authenticated/admin.referencias'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
 import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
@@ -42,6 +43,12 @@ const AuthenticatedAdminVideoRoute = AuthenticatedAdminVideoRouteImport.update({
   path: '/video',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminTrabalhosRoute =
+  AuthenticatedAdminTrabalhosRouteImport.update({
+    id: '/trabalhos',
+    path: '/trabalhos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminReferenciasRoute =
   AuthenticatedAdminReferenciasRouteImport.update({
     id: '/referencias',
@@ -68,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
+  '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +85,7 @@ export interface FileRoutesByTo {
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
+  '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRoutesById {
@@ -88,6 +97,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
   '/_authenticated/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
+  '/_authenticated/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
   '/_authenticated/admin/video': typeof AuthenticatedAdminVideoRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/referencias'
+    | '/admin/trabalhos'
     | '/admin/video'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/admin/avaliacoes'
     | '/admin/banner'
     | '/admin/referencias'
+    | '/admin/trabalhos'
     | '/admin/video'
   id:
     | '__root__'
@@ -118,6 +130,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/avaliacoes'
     | '/_authenticated/admin/banner'
     | '/_authenticated/admin/referencias'
+    | '/_authenticated/admin/trabalhos'
     | '/_authenticated/admin/video'
   fileRoutesById: FileRoutesById
 }
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVideoRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/trabalhos': {
+      id: '/_authenticated/admin/trabalhos'
+      path: '/trabalhos'
+      fullPath: '/admin/trabalhos'
+      preLoaderRoute: typeof AuthenticatedAdminTrabalhosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/referencias': {
       id: '/_authenticated/admin/referencias'
       path: '/referencias'
@@ -192,6 +212,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
   AuthenticatedAdminReferenciasRoute: typeof AuthenticatedAdminReferenciasRoute
+  AuthenticatedAdminTrabalhosRoute: typeof AuthenticatedAdminTrabalhosRoute
   AuthenticatedAdminVideoRoute: typeof AuthenticatedAdminVideoRoute
 }
 
@@ -199,6 +220,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
   AuthenticatedAdminReferenciasRoute: AuthenticatedAdminReferenciasRoute,
+  AuthenticatedAdminTrabalhosRoute: AuthenticatedAdminTrabalhosRoute,
   AuthenticatedAdminVideoRoute: AuthenticatedAdminVideoRoute,
 }
 
