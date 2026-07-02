@@ -175,6 +175,33 @@ function AvaliacoesGallery() {
   );
 }
 
+type Trab = { id: string; image_url: string };
+
+function TrabalhosGallery() {
+  const [items, setItems] = useState<Trab[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("trabalhos")
+      .select("id, image_url")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }) => setItems((data ?? []) as Trab[]));
+  }, []);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="mt-8 space-y-5">
+      {items.map((t) => (
+        <div key={t.id} className="rounded-2xl overflow-hidden ring-1 ring-gold/30 bg-black/40">
+          <img src={t.image_url} alt="Trabalho" loading="lazy" className="w-full h-auto object-cover" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 function Divider() {
   return (
