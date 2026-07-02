@@ -98,9 +98,9 @@ function BannerGallery() {
   if (banners.length === 0) return null;
 
   return (
-    <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
       {banners.map((url, i) => (
-        <div key={i} className="rounded-2xl overflow-hidden ring-1 ring-gold/30 aspect-square bg-black/40">
+        <div key={i} className="rounded-2xl overflow-hidden ring-1 ring-gold/30 aspect-[3/4] sm:aspect-[3/5] bg-black/40">
           <img src={url} alt={`Banner ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
         </div>
       ))}
