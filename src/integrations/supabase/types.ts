@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      site_settings: {
+        Row: {
+          banner_1: string | null
+          banner_2: string | null
+          banner_3: string | null
+          id: string
+          singleton: boolean
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          banner_1?: string | null
+          banner_2?: string | null
+          banner_3?: string | null
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          banner_1?: string | null
+          banner_2?: string | null
+          banner_3?: string | null
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
