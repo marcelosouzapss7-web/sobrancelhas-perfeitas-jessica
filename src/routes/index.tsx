@@ -2,6 +2,41 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Play, MessageCircle, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+function CountdownTimer() {
+  const [t, setT] = useState({ h: 23, m: 59, s: 59 });
+  useEffect(() => {
+    const id = setInterval(() => {
+      setT((prev) => {
+        let { h, m, s } = prev;
+        s -= 1;
+        if (s < 0) { s = 59; m -= 1; }
+        if (m < 0) { m = 59; h -= 1; }
+        if (h < 0) { h = 0; m = 0; s = 0; }
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const Box = ({ v, u }: { v: number; u: string }) => (
+    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md bg-gradient-to-b from-gold-light to-gold text-black flex items-end justify-center relative">
+      <span className="font-serif text-4xl sm:text-5xl font-bold leading-none pb-2">{pad(v)}</span>
+      <span className="absolute bottom-2 right-2 text-xs font-semibold">{u}</span>
+    </div>
+  );
+  return (
+    <div className="mt-6 flex items-center justify-center gap-2">
+      <Box v={t.h} u="H" /><Box v={t.m} u="M" /><Box v={t.s} u="S" />
+    </div>
+  );
+}
 
 
 export const Route = createFileRoute("/")({
@@ -579,17 +614,73 @@ function Index() {
         <p className="font-serif italic text-2xl sm:text-3xl -mt-1">Perfeitas</p>
       </section>
 
-      <section className="px-5 py-8 max-w-2xl mx-auto text-center">
-        <h3 className="font-serif text-lg uppercase tracking-wide text-gold">
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <h3 className="font-serif text-lg uppercase tracking-wide">
           Oferta por Tempo Limitado!
         </h3>
+        <CountdownTimer />
+
+        <div className="mt-8 space-y-1">
+          <p className="text-sm text-foreground/80">de R$ 447,00 Por Apenas</p>
+          <p className="font-serif text-2xl text-gold">12X DE</p>
+          <p className="font-serif text-5xl text-gold font-semibold tracking-tight">R$ 15,20</p>
+          <p className="text-sm text-foreground/80">Ou apenas R$ 147,00 à vista</p>
+        </div>
+
+        <p className="mt-6 text-sm text-foreground/85 leading-relaxed">
+          Clique agora mesmo no botão abaixo e garanta sua vaga no curso.
+          Transforme sua carreira, conquiste o sucesso e seja reconhecida como
+          uma especialista em design de sobrancelhas. Não deixe essa
+          oportunidade passar!
+        </p>
+
+        <div className="flex justify-center mt-8">
+          <GoldButton>Sim, quero começar agora!</GoldButton>
+        </div>
       </section>
 
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="font-serif text-2xl sm:text-3xl uppercase tracking-wide text-center text-gold">
+          Perguntas Frequentes
+        </h2>
+        <Divider />
+        <Accordion type="single" collapsible className="mt-6 space-y-3">
+          {[
+            { q: "Qual o formato do curso?", a: "O curso é 100% online, com aulas em vídeo que você pode assistir quando e onde quiser, no seu próprio ritmo." },
+            { q: "Quais as formas de pagamento?", a: "Você pode pagar via cartão de crédito em até 12x, PIX ou boleto bancário." },
+            { q: "Ainda não recebi o curso, o que fazer?", a: "Após a confirmação do pagamento, o acesso é liberado automaticamente por e-mail. Verifique também a caixa de spam. Se ainda não recebeu, entre em contato pelo WhatsApp." },
+            { q: "Como vou receber o curso?", a: "Você receberá um e-mail com login e senha para acessar a área do aluno, onde ficam disponíveis todas as aulas e bônus." },
+            { q: "Tenho que pagar alguma mensalidade?", a: "Não! O pagamento é único. Você paga uma única vez e tem acesso ao conteúdo completo." },
+            { q: "Por quanto tempo terei acesso ao curso?", a: "O acesso é vitalício. Você poderá assistir e revisar as aulas sempre que quiser." },
+          ].map((item, i) => (
+            <AccordionItem
+              key={i}
+              value={`item-${i}`}
+              className="rounded-lg bg-card/40 px-4 border-b-2 border-b-gold/60"
+            >
+              <AccordionTrigger className="text-left text-gold hover:no-underline text-sm font-semibold">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-sm text-foreground/85 leading-relaxed">
+                {item.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </section>
 
-
-
-      <footer className="text-center py-8 text-xs text-foreground/50">
-        © {new Date().getFullYear()} Sobrancelhas Perfeitas
+      <footer className="px-5 pt-8 pb-10 text-center text-xs text-foreground/60 space-y-4 max-w-2xl mx-auto">
+        <p className="font-semibold">Política de Privacidade | Termos de uso</p>
+        <p>
+          Copyright © {new Date().getFullYear()} – Curso Sobrancelhas Perfeitas ©{" "}
+          {new Date().getFullYear()} – CNPJ: 52.832.200/0001-04 – Todos os Direitos Reservados.
+        </p>
+        <p className="text-foreground/50 leading-relaxed">
+          Este Site Não Faz Parte Do Site Do Facebook Ou Do Facebook Inc. Além Disso,
+          Este Site NÃO É Endossado Pelo Facebook De Nenhuma Maneira. FACEBOOK É Uma
+          Marca Comercial Independente Da FACEBOOK, Inc. *Os Resultados Variam De
+          Pessoa Para Pessoa, Seus Objetivos E Esforço.
+        </p>
       </footer>
 
       <a
