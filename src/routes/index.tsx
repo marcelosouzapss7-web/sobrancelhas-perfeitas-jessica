@@ -280,6 +280,7 @@ function Index() {
         </h2>
         <Divider />
         <ReferenciasGallery />
+        <AvaliacoesGallery />
         <div className="flex justify-center mt-8">
           <GoldButton>Sim, quero começar agora!</GoldButton>
         </div>
