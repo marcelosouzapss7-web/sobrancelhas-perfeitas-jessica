@@ -76,6 +76,8 @@ function CheckoutPage() {
   const AMOUNT_CENTS = 9990;
 
   const createPix = useServerFn(createIronpayPix);
+  const checkPixStatus = useServerFn(checkIronpayPixStatus);
+
 
   const validateCustomer = (setErr: (m: string | null) => void) => {
     if (!email || email !== emailConfirm) {
