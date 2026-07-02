@@ -203,7 +203,7 @@ function CheckoutPage() {
 
           <button
             type="button"
-            onClick={() => { setMethod("card"); setGenerated(false); }}
+            onClick={() => { setMethod("card"); setPixData(null); setPixError(null); }}
             className={`w-full border rounded px-3 py-3 flex items-center gap-3 text-sm transition ${method === "card" ? "border-neutral-900 border-2" : "border-neutral-300"}`}
           >
             <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === "card" ? "border-neutral-900" : "border-neutral-400"}`}>
@@ -215,7 +215,7 @@ function CheckoutPage() {
 
           <button
             type="button"
-            onClick={() => { setMethod("pix"); setGenerated(false); }}
+            onClick={() => { setMethod("pix"); setPixError(null); }}
             className={`w-full border rounded px-3 py-3 flex items-center gap-3 text-sm transition ${method === "pix" ? "border-neutral-900 border-2" : "border-neutral-300"}`}
           >
             <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === "pix" ? "border-neutral-900" : "border-neutral-400"}`}>
@@ -229,42 +229,56 @@ function CheckoutPage() {
 
           {method === "card" && (
             <div className="space-y-3 pt-2">
-              <input type="text" placeholder="Número do cartão" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm" />
-              <input type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-300 rounded px-3 py-2 text-sm" />
-              <div className="grid grid-cols-2 gap-2">
-                <input type="text" placeholder="MM/AA" className="border border-neutral-300 rounded px-3 py-2 text-sm" />
-                <input type="text" placeholder="CVV" className="border border-neutral-300 rounded px-3 py-2 text-sm" />
+              <div className="rounded border border-yellow-300 bg-yellow-50 text-yellow-900 text-xs px-3 py-2">
+                No momento aceitamos pagamento apenas via <strong>Pix</strong>. Selecione a opção Pix para concluir a compra.
               </div>
-              <select className="w-full border border-neutral-300 rounded px-3 py-2 text-sm">
-                <option>12x de R$ 8,33 sem juros</option>
-                <option>À vista R$ 99,90</option>
-              </select>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition">
-                Finalizar compra
+              <input disabled type="text" placeholder="Número do cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              <input disabled type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              <div className="grid grid-cols-2 gap-2">
+                <input disabled type="text" placeholder="MM/AA" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+                <input disabled type="text" placeholder="CVV" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              </div>
+              <button disabled className="w-full bg-neutral-300 text-neutral-500 font-bold py-3 rounded cursor-not-allowed">
+                Indisponível
               </button>
             </div>
           )}
 
-          {method === "pix" && !generated && (
-            <button
-              onClick={() => setGenerated(true)}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition mt-2"
-            >
-              Gerar Pix
-            </button>
+          {method === "pix" && !pixData && (
+            <>
+              {pixError && (
+                <div className="rounded border border-red-300 bg-red-50 text-red-700 text-xs px-3 py-2">{pixError}</div>
+              )}
+              <button
+                onClick={handleGeneratePix}
+                disabled={loading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3 rounded transition mt-2 flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Gerando Pix..." : "Gerar Pix"}
+              </button>
+            </>
           )}
 
-          {method === "pix" && generated && (
-            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-2">
-              <div className="w-40 h-40 mx-auto bg-neutral-900 grid grid-cols-8 gap-0.5 p-2">
-                {Array.from({ length: 64 }).map((_, i) => (
-                  <div key={i} className={Math.random() > 0.5 ? "bg-white" : "bg-neutral-900"} />
-                ))}
+          {method === "pix" && pixData && (
+            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-3">
+              {pixData.qr_code?.startsWith("data:image") ? (
+                <img src={pixData.qr_code} alt="QR Code Pix" className="w-52 h-52 mx-auto" />
+              ) : (
+                <div className="w-52 h-52 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+              )}
+              <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código abaixo</p>
+              <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700">
+                {pixData.pix_code}
               </div>
-              <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco</p>
-              <button className="text-xs text-green-700 underline">Copiar código Pix</button>
+              <button onClick={copyPix} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
+                <Copy className="w-4 h-4" />
+                {copied ? "Copiado!" : "Copiar código Pix"}
+              </button>
+              <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
             </div>
           )}
+
 
           <p className="text-center text-xs text-neutral-500 pt-1">Protegido por <span className="font-bold">🔥 hotmart</span></p>
         </div>
