@@ -386,27 +386,51 @@ function CheckoutPage() {
 
           {method === "pix" && pixData && (() => {
             const raw = pixData.qr_code?.trim() || "";
-            let qrSrc = "";
-            if (raw.startsWith("data:image")) qrSrc = raw;
-            else if (raw.startsWith("http")) qrSrc = raw;
-            else if (raw.length > 100 && /^[A-Za-z0-9+/=\s]+$/.test(raw)) qrSrc = `data:image/png;base64,${raw.replace(/\s/g, "")}`;
-            else if (pixData.pix_code) qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(pixData.pix_code)}`;
+            const fallback = pixData.pix_code
+              ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(pixData.pix_code)}`
+              : "";
+            let primary = "";
+            if (raw.startsWith("data:image")) primary = raw;
+            else if (raw.length > 100 && /^[A-Za-z0-9+/=\s]+$/.test(raw)) primary = `data:image/png;base64,${raw.replace(/\s/g, "")}`;
+            else primary = fallback;
+            const qrSrc = primary || fallback;
+
             return (
-              <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-3">
-                {qrSrc ? (
-                  <img src={qrSrc} alt="QR Code Pix" className="w-52 h-52 mx-auto" />
-                ) : (
-                  <div className="w-52 h-52 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
-                )}
-                <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código abaixo</p>
-                <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700">
-                  {pixData.pix_code}
+              <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                <div className="bg-white rounded-lg w-full max-w-md shadow-xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200">
+                    <h3 className="text-base font-bold text-neutral-900">Pague com Pix</h3>
+                    <button
+                      onClick={() => { setPixData(null); setCopied(false); }}
+                      className="text-neutral-500 hover:text-neutral-800 text-2xl leading-none"
+                      aria-label="Fechar"
+                    >×</button>
+                  </div>
+                  <div className="p-5 text-center space-y-4">
+                    {qrSrc ? (
+                      <img
+                        src={qrSrc}
+                        alt="QR Code Pix"
+                        className="w-60 h-60 mx-auto border border-neutral-200 rounded"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          if (fallback && img.src !== fallback) img.src = fallback;
+                        }}
+                      />
+                    ) : (
+                      <div className="w-60 h-60 mx-auto bg-neutral-100 flex items-center justify-center text-xs text-neutral-500">QR Code indisponível</div>
+                    )}
+                    <p className="text-xs text-neutral-600">Escaneie o QR Code com o app do seu banco ou copie o código Pix abaixo</p>
+                    <div className="bg-neutral-100 border border-neutral-200 rounded px-2 py-2 text-[10px] break-all font-mono text-neutral-700 text-left">
+                      {pixData.pix_code}
+                    </div>
+                    <button onClick={copyPix} className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-3 rounded transition">
+                      <Copy className="w-4 h-4" />
+                      {copied ? "Código copiado!" : "Copiar código Pix"}
+                    </button>
+                    <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
+                  </div>
                 </div>
-                <button onClick={copyPix} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
-                  <Copy className="w-4 h-4" />
-                  {copied ? "Copiado!" : "Copiar código Pix"}
-                </button>
-                <p className="text-[11px] text-neutral-500">Após o pagamento, seu acesso é liberado automaticamente por e-mail.</p>
               </div>
             );
           })()}
