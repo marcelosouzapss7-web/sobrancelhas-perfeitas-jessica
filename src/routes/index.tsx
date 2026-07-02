@@ -148,6 +148,33 @@ function ReferenciasGallery() {
   );
 }
 
+type Av = { id: string; image_url: string };
+
+function AvaliacoesGallery() {
+  const [items, setItems] = useState<Av[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("avaliacoes")
+      .select("id, image_url")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }) => setItems((data ?? []) as Av[]));
+  }, []);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+      {items.map((a) => (
+        <div key={a.id} className="rounded-2xl overflow-hidden bg-white shadow-xl ring-1 ring-gold/20">
+          <img src={a.image_url} alt="Avaliação" loading="lazy" className="w-full h-auto object-contain" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 function Divider() {
   return (
