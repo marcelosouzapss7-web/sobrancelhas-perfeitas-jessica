@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Play, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import eyebrowsCollage from "@/assets/eyebrows-collage.jpg";
 import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/")({
   component: Index,
