@@ -28,6 +28,7 @@ function AdminLayout() {
     { to: "/admin/banner", label: "Banner", icon: ImageIcon },
     { to: "/admin/referencias", label: "Referências", icon: Users },
     { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },
+    { to: "/admin/trabalhos", label: "Mais Imagens", icon: Images },
   ] as const;
 
   return (
