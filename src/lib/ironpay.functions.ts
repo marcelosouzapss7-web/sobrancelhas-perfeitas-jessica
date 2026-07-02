@@ -88,3 +88,48 @@ export const createIronpayPix = createServerFn({ method: "POST" })
       return { success: false, error: "Falha ao contatar a IronPay." };
     }
   });
+
+export type CheckPixStatusResult =
+  | { paid: false; status: string }
+  | { paid: true; status: string; download_url: string | null };
+
+export const checkIronpayPixStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.object({ hash: z.string().min(3) }).parse(input))
+  .handler(async ({ data }): Promise<CheckPixStatusResult> => {
+    const token = process.env.IRONPAY_API_TOKEN;
+    if (!token) return { paid: false, status: "not_configured" };
+
+    let status = "unknown";
+    try {
+      const url = `https://api.ironpayapp.com.br/api/public/v1/transactions/${encodeURIComponent(data.hash)}?api_token=${encodeURIComponent(token)}`;
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      const json = (await res.json()) as any;
+      const root = json?.data ?? json;
+      status = String(root?.payment_status ?? root?.status ?? "unknown");
+    } catch (err) {
+      console.error("IronPay status check failed", err);
+      return { paid: false, status: "error" };
+    }
+
+    const paid = ["paid", "approved", "completed"].includes(status.toLowerCase());
+    if (!paid) return { paid: false, status };
+
+    // Gera link de download para o PDF do produto
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: settings } = await supabaseAdmin
+        .from("site_settings")
+        .select("product_file_path")
+        .eq("singleton", true)
+        .maybeSingle();
+      const path = settings?.product_file_path;
+      if (!path) return { paid: true, status, download_url: null };
+      const { data: signed } = await supabaseAdmin.storage
+        .from("produtos")
+        .createSignedUrl(path, 60 * 60, { download: true });
+      return { paid: true, status, download_url: signed?.signedUrl ?? null };
+    } catch (err) {
+      console.error("Erro ao gerar link de download", err);
+      return { paid: true, status, download_url: null };
+    }
+  });
