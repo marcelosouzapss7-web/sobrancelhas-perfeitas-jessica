@@ -387,6 +387,7 @@ function Index() {
           Está pronta para fazer trabalhos <GoldText>incríveis como esses?</GoldText>
         </h2>
         <Divider />
+        <TrabalhosGallery />
       </section>
 
 
