@@ -289,8 +289,8 @@ function Index() {
         <div className="mt-10 space-y-1">
           <p className="text-sm text-foreground/70">de R$ 447,00 Por Apenas</p>
           <p className="font-serif text-2xl text-gold">12X DE</p>
-          <p className="font-serif text-6xl text-gold font-semibold tracking-tight">R$ 15,20</p>
-          <p className="text-sm text-foreground/70">Ou R$ 147,00 á vista</p>
+          <p className="font-serif text-6xl text-gold font-semibold tracking-tight">R$ 8,33</p>
+          <p className="text-sm text-foreground/70">Ou R$ 99,90 á vista</p>
         </div>
 
         <div className="mt-8 flex justify-center">
@@ -443,7 +443,7 @@ function Index() {
               n: "02",
               title: "EPILAÇÃO EGÍPCIA",
               desc: "Aprenda a fazer de forma profissional a técnica de epilação com a linha.",
-              price: "Custa R$ 147,00",
+              price: "Custa R$ 99,90",
             },
             {
               n: "03",
@@ -493,7 +493,7 @@ function Index() {
           terá acesso, somam juntos <em className="font-semibold">mais de R$1.136 Reais.</em>
         </p>
         <h2 className="mt-6 font-serif text-2xl sm:text-3xl text-gold leading-snug">
-          Mas fazendo a inscrição hoje, irá pagar somente R$147,00
+          Mas fazendo a inscrição hoje, irá pagar somente R$99,90
         </h2>
         <div className="flex justify-center mt-6">
           <GoldButton>Sim, quero começar agora!</GoldButton>
@@ -502,7 +502,7 @@ function Index() {
         <div className="mt-8 space-y-5 text-sm text-foreground/85 leading-relaxed">
           <p>
             Tenha acesso ao pacote completo do Curso, e a mais 5 Bônus
-            Exclusivos por 12x de apenas R$15,20 (ou à vista se preferir).
+            Exclusivos por 12x de apenas R$8,33 (ou à vista se preferir).
           </p>
           <p>
             E sabe o que é ainda melhor? Isso é menos de 0,40 centavos por dia,
@@ -623,8 +623,8 @@ function Index() {
         <div className="mt-8 space-y-1">
           <p className="text-sm text-foreground/80">de R$ 447,00 Por Apenas</p>
           <p className="font-serif text-2xl text-gold">12X DE</p>
-          <p className="font-serif text-5xl text-gold font-semibold tracking-tight">R$ 15,20</p>
-          <p className="text-sm text-foreground/80">Ou apenas R$ 147,00 à vista</p>
+          <p className="font-serif text-5xl text-gold font-semibold tracking-tight">R$ 8,33</p>
+          <p className="text-sm text-foreground/80">Ou apenas R$ 99,90 à vista</p>
         </div>
 
         <p className="mt-6 text-sm text-foreground/85 leading-relaxed">
