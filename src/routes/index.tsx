@@ -452,6 +452,141 @@ function Index() {
         </div>
       </section>
 
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <p className="text-sm text-foreground/85 leading-relaxed">
+          Todas as aulas do curso Sobrancelhas Perfeitas, mais os Bônus que você
+          terá acesso, somam juntos <em className="font-semibold">mais de R$1.136 Reais.</em>
+        </p>
+        <h2 className="mt-6 font-serif text-2xl sm:text-3xl text-gold leading-snug">
+          Mas fazendo a inscrição hoje, irá pagar somente R$147,00
+        </h2>
+        <div className="flex justify-center mt-6">
+          <GoldButton>Sim, quero começar agora!</GoldButton>
+        </div>
+
+        <div className="mt-8 space-y-5 text-sm text-foreground/85 leading-relaxed">
+          <p>
+            Tenha acesso ao pacote completo do Curso, e a mais 5 Bônus
+            Exclusivos por 12x de apenas R$15,20 (ou à vista se preferir).
+          </p>
+          <p>
+            E sabe o que é ainda melhor? Isso é menos de 0,40 centavos por dia,
+            um investimento baixíssimo para transformar sua vida profissional.
+            Eu sei, o valor é ridiculamente barato, porém é uma Oferta por Tempo Limitado.
+          </p>
+          <p>
+            Eu acredito no meu método e sei que ele pode transformar sua vida
+            como já transformou a de mais de 80.000 mil alunas. Então, não deixe
+            essa chance passar, aproveite agora.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gradient-to-b from-yellow-500 to-yellow-700 text-black">
+        <div className="px-5 max-w-2xl mx-auto">
+          <h2 className="font-serif text-2xl sm:text-3xl uppercase tracking-wide">
+            Certificado de Conclusão
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed">
+            Após concluir o Curso Sobrancelhas Perfeitas, você terá acesso a um
+            lindo certificado de conclusão que você poderá emitir direto da sua
+            área do aluno.
+          </p>
+        </div>
+      </section>
+
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="font-serif text-sm uppercase text-foreground/70">Quem sou eu?</h2>
+        <h3 className="font-serif text-3xl text-gold mt-1 mb-6">JÉSSICA SOARES</h3>
+        <div className="space-y-4 text-sm text-foreground/85 leading-relaxed">
+          <p>
+            Especialista em Design de Sobrancelhas, com mais de 12 anos de
+            experiência e atuação no segmento.
+          </p>
+          <p>
+            Graduada em Contabilidade, proprietária do Studio Jéssica Soares Beauty
+            Academy e Pioneira em Ministração de Curso Online no Brasil desde 2012.
+          </p>
+          <p>
+            Criei o Método Sobrancelhas Perfeitas, desenvolvido com base na minha
+            vasta experiência na área e nas necessidades do mercado atual. Aulas
+            pensadas e estruturadas para garantir que você aprenda tudo o que
+            precisa saber para ser uma profissional de sucesso no mundo do Design
+            de Sobrancelhas.
+          </p>
+          <p>
+            E através do meu método, tenho transformado a vida de muitas pessoas,
+            onde já contabilizo mais de 80.000 mil alunas.
+          </p>
+        </div>
+      </section>
+
+      <section className="px-5 py-10 max-w-2xl mx-auto text-center">
+        <div className="inline-flex items-center justify-center">
+          <div className="relative w-40 h-44">
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-gold-light via-gold to-yellow-800"
+              style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}
+            />
+            <div
+              className="absolute inset-[6px] bg-black flex flex-col items-center justify-center"
+              style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}
+            >
+              <span className="font-serif text-6xl text-gold leading-none">7</span>
+              <span className="mt-1 px-4 py-1 rounded-sm bg-gradient-to-b from-gold-light to-gold text-black font-semibold tracking-widest text-sm">
+                DIAS
+              </span>
+            </div>
+          </div>
+        </div>
+        <h2 className="mt-8 font-serif text-2xl uppercase text-gold tracking-wide">
+          Ainda está na dúvida?
+        </h2>
+        <div className="mt-6 space-y-4 text-sm text-foreground/85 leading-relaxed">
+          <p>
+            Não tem dúvida, o Curso Sobrancelhas Perfeitas simplesmente funciona.
+            A prova disso são as milhares de alunas com resultados incríveis e
+            que tiveram suas vidas transformadas.
+          </p>
+          <p>
+            Mas se você ainda tem alguma dúvida, vou permitir que você experimente
+            por 7 dias e caso você não goste ou não veja nenhum resultado, basta
+            me enviar um e-mail durante esse período que devolvo todo o valor que
+            você pagou.
+          </p>
+          <p>
+            O Objetivo é adicionar Valor Real à sua Vida, mostrando técnicas
+            extremamente eficazes que levará você a ser uma Designer de Sucesso.
+          </p>
+          <p>
+            O único risco que você corre é de estar aqui e se tornar uma Expert em
+            Sobrancelhas e ter Sucesso. Simples assim!
+          </p>
+        </div>
+        <div className="flex justify-center mt-8">
+          <GoldButton>Sim, quero começar agora!</GoldButton>
+        </div>
+      </section>
+
+      <section className="py-14 bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center">
+        <p className="tracking-[0.5em] text-sm font-semibold">CURSO</p>
+        <div className="flex items-center justify-center gap-3 mt-2">
+          <span className="h-px w-16 bg-black/60" />
+          <span className="text-lg">✦</span>
+          <span className="h-px w-16 bg-black/60" />
+        </div>
+        <h2 className="font-serif text-4xl sm:text-5xl mt-2">sobrancelhas</h2>
+        <p className="font-serif italic text-2xl sm:text-3xl -mt-1">Perfeitas</p>
+      </section>
+
+      <section className="px-5 py-8 max-w-2xl mx-auto text-center">
+        <h3 className="font-serif text-lg uppercase tracking-wide text-gold">
+          Oferta por Tempo Limitado!
+        </h3>
+      </section>
+
+
+
 
       <footer className="text-center py-8 text-xs text-foreground/50">
         © {new Date().getFullYear()} Sobrancelhas Perfeitas
