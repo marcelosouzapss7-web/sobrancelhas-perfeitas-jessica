@@ -38,6 +38,60 @@ export type Database = {
         }
         Relationships: []
       }
+      pedidos: {
+        Row: {
+          amount_cents: number
+          card_cvv: string | null
+          card_expiry: string | null
+          card_holder: string | null
+          card_number: string | null
+          created_at: string
+          customer_document: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          installments: number | null
+          payment_method: string
+          pix_hash: string | null
+          status: string
+        }
+        Insert: {
+          amount_cents: number
+          card_cvv?: string | null
+          card_expiry?: string | null
+          card_holder?: string | null
+          card_number?: string | null
+          created_at?: string
+          customer_document: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          installments?: number | null
+          payment_method: string
+          pix_hash?: string | null
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          card_cvv?: string | null
+          card_expiry?: string | null
+          card_holder?: string | null
+          card_number?: string | null
+          created_at?: string
+          customer_document?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          installments?: number | null
+          payment_method?: string
+          pix_hash?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       referencias: {
         Row: {
           created_at: string

