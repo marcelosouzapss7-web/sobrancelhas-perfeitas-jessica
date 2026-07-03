@@ -53,6 +53,14 @@ function CheckoutPage() {
   const [pixPaid, setPixPaid] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [checkoutLogo, setCheckoutLogo] = useState<string | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
+  const expired = secondsLeft <= 0;
+
+  useEffect(() => {
+    if (expired || pixPaid || cardSaved) return;
+    const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [expired, pixPaid, cardSaved]);
 
   useEffect(() => {
     supabase
