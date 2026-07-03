@@ -18,29 +18,19 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-function TopTimer() {
-  const [t, setT] = useState({ h: 0, m: 8, s: 9 });
-  const ref = useRef<ReturnType<typeof setInterval> | null>(null);
-  useEffect(() => {
-    ref.current = setInterval(() => {
-      setT((p) => {
-        let { h, m, s } = p;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 0; m = 0; s = 0; }
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => { if (ref.current) clearInterval(ref.current); };
-  }, []);
+const INITIAL_SECONDS = 8 * 60 + 9;
+
+function TopTimer({ secondsLeft }: { secondsLeft: number }) {
+  const h = Math.floor(secondsLeft / 3600);
+  const m = Math.floor((secondsLeft % 3600) / 60);
+  const s = secondsLeft % 60;
   const pad = (n: number) => n.toString().padStart(2, "0");
   return (
     <div className="w-full bg-red-700 text-white">
       <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3 text-sm">
         <span className="hidden sm:inline">Finalize sua compra e dê o primeiro passo agora</span>
         <span className="font-mono text-lg font-bold tracking-wider">
-          {pad(t.h)} : {pad(t.m)} : {pad(t.s)}
+          {pad(h)} : {pad(m)} : {pad(s)}
         </span>
         <span className="flex items-center gap-1"><Timer className="w-4 h-4" /> Últimas Vagas!!</span>
       </div>
