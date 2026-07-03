@@ -246,11 +246,9 @@ function CheckoutPage() {
             </button>
           </div>
           <div className="flex gap-3">
-            <div className="w-20 h-24 rounded overflow-hidden bg-gradient-to-b from-neutral-800 to-neutral-600 flex items-center justify-center text-white text-[9px] text-center font-serif px-1">
-              {checkoutLogo ? (
+            <div className="w-20 h-24 rounded overflow-hidden bg-neutral-100 flex items-center justify-center">
+              {checkoutLogo && (
                 <img src={checkoutLogo} alt="Curso Sobrancelhas Perfeitas" className="w-full h-full object-cover" />
-              ) : (
-                <>SOBRANCELHAS<br/>PERFEITAS</>
               )}
             </div>
             <div className="flex-1">
