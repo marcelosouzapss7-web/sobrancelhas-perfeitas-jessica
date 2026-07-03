@@ -401,10 +401,23 @@ function CheckoutPage() {
           )}
 
           {method === "card" && cardSaved && (
-            <div className="mt-3 p-4 border-2 border-dashed border-green-600 rounded text-center space-y-2">
-              <CheckCircle2 className="w-10 h-10 text-green-600 mx-auto" />
-              <p className="text-sm font-semibold">Pedido recebido!</p>
-              <p className="text-xs text-neutral-600">Enviaremos as instruções de acesso para {email}.</p>
+            <div className="fixed inset-0 z-50 bg-white flex items-center justify-center p-6">
+              <div className="max-w-md w-full text-center space-y-5">
+                <div className="mx-auto w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <Timer className="w-8 h-8 text-yellow-600" />
+                </div>
+                <h1 className="text-2xl font-bold text-neutral-900">Compra em análise</h1>
+                <p className="text-sm text-neutral-600">
+                  Recebemos seus dados e sua compra está em análise. Entraremos em contato pelo e-mail{" "}
+                  <span className="font-semibold">{email}</span> assim que o pedido for aprovado.
+                </p>
+                <a
+                  href="/"
+                  className="inline-block w-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold py-3 rounded transition"
+                >
+                  Voltar para a página inicial
+                </a>
+              </div>
             </div>
           )}
 
