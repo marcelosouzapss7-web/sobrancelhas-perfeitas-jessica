@@ -62,6 +62,18 @@ function CheckoutPage() {
   const [copied, setCopied] = useState(false);
   const [pixPaid, setPixPaid] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [checkoutLogo, setCheckoutLogo] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("checkout_logo")
+      .maybeSingle()
+      .then(({ data }) => {
+        const url = (data as { checkout_logo?: string | null } | null)?.checkout_logo ?? null;
+        setCheckoutLogo(url);
+      });
+  }, []);
 
   // Campos do cartão
   const [cardNumber, setCardNumber] = useState("");
