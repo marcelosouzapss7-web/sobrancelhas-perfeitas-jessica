@@ -232,7 +232,28 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
-      <TopTimer />
+      <TopTimer secondsLeft={secondsLeft} />
+
+      {expired && (
+        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center p-6">
+          <div className="max-w-md w-full text-center space-y-5">
+            <div className="w-16 h-16 rounded-full bg-red-100 text-red-700 flex items-center justify-center mx-auto">
+              <Timer className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold text-neutral-900">Tempo expirado</h2>
+            <p className="text-neutral-600">
+              O tempo para concluir sua compra terminou. Atualize a página para tentar novamente.
+            </p>
+            <a
+              href="/"
+              className="inline-block bg-neutral-900 text-white font-bold py-3 px-6 rounded hover:bg-neutral-800 transition"
+            >
+              Atualizar
+            </a>
+          </div>
+        </div>
+      )}
+
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
         {/* Card do produto */}
