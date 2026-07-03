@@ -127,6 +127,7 @@ export type Database = {
           banner_1: string | null
           banner_2: string | null
           banner_3: string | null
+          checkout_logo: string | null
           id: string
           product_file_path: string | null
           singleton: boolean
@@ -137,6 +138,7 @@ export type Database = {
           banner_1?: string | null
           banner_2?: string | null
           banner_3?: string | null
+          checkout_logo?: string | null
           id?: string
           product_file_path?: string | null
           singleton?: boolean
@@ -147,6 +149,7 @@ export type Database = {
           banner_1?: string | null
           banner_2?: string | null
           banner_3?: string | null
+          checkout_logo?: string | null
           id?: string
           product_file_path?: string | null
           singleton?: boolean

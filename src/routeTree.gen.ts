@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminVideoRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminTrabalhosRouteImport } from './routes/_authenticated/admin.trabalhos'
 import { Route as AuthenticatedAdminReferenciasRouteImport } from './routes/_authenticated/admin.referencias'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
+import { Route as AuthenticatedAdminLogoRouteImport } from './routes/_authenticated/admin.logo'
 import { Route as AuthenticatedAdminBannerRouteImport } from './routes/_authenticated/admin.banner'
 import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
 import { Route as AuthenticatedAdminArquivoRouteImport } from './routes/_authenticated/admin.arquivo'
@@ -69,6 +70,11 @@ const AuthenticatedAdminPedidosRoute =
     path: '/pedidos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminLogoRoute = AuthenticatedAdminLogoRouteImport.update({
+  id: '/logo',
+  path: '/logo',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminBannerRoute =
   AuthenticatedAdminBannerRouteImport.update({
     id: '/banner',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/logo': typeof AuthenticatedAdminLogoRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/admin/logo': typeof AuthenticatedAdminLogoRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/arquivo': typeof AuthenticatedAdminArquivoRoute
   '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
   '/_authenticated/admin/banner': typeof AuthenticatedAdminBannerRoute
+  '/_authenticated/admin/logo': typeof AuthenticatedAdminLogoRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/_authenticated/admin/referencias': typeof AuthenticatedAdminReferenciasRoute
   '/_authenticated/admin/trabalhos': typeof AuthenticatedAdminTrabalhosRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/admin/arquivo'
     | '/admin/avaliacoes'
     | '/admin/banner'
+    | '/admin/logo'
     | '/admin/pedidos'
     | '/admin/referencias'
     | '/admin/trabalhos'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/admin/arquivo'
     | '/admin/avaliacoes'
     | '/admin/banner'
+    | '/admin/logo'
     | '/admin/pedidos'
     | '/admin/referencias'
     | '/admin/trabalhos'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/arquivo'
     | '/_authenticated/admin/avaliacoes'
     | '/_authenticated/admin/banner'
+    | '/_authenticated/admin/logo'
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/referencias'
     | '/_authenticated/admin/trabalhos'
@@ -244,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/logo': {
+      id: '/_authenticated/admin/logo'
+      path: '/logo'
+      fullPath: '/admin/logo'
+      preLoaderRoute: typeof AuthenticatedAdminLogoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/banner': {
       id: '/_authenticated/admin/banner'
       path: '/banner'
@@ -272,6 +291,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminArquivoRoute: typeof AuthenticatedAdminArquivoRoute
   AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
   AuthenticatedAdminBannerRoute: typeof AuthenticatedAdminBannerRoute
+  AuthenticatedAdminLogoRoute: typeof AuthenticatedAdminLogoRoute
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
   AuthenticatedAdminReferenciasRoute: typeof AuthenticatedAdminReferenciasRoute
   AuthenticatedAdminTrabalhosRoute: typeof AuthenticatedAdminTrabalhosRoute
@@ -282,6 +302,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminArquivoRoute: AuthenticatedAdminArquivoRoute,
   AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
   AuthenticatedAdminBannerRoute: AuthenticatedAdminBannerRoute,
+  AuthenticatedAdminLogoRoute: AuthenticatedAdminLogoRoute,
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
   AuthenticatedAdminReferenciasRoute: AuthenticatedAdminReferenciasRoute,
   AuthenticatedAdminTrabalhosRoute: AuthenticatedAdminTrabalhosRoute,
