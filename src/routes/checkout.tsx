@@ -18,29 +18,19 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-function TopTimer() {
-  const [t, setT] = useState({ h: 0, m: 8, s: 9 });
-  const ref = useRef<ReturnType<typeof setInterval> | null>(null);
-  useEffect(() => {
-    ref.current = setInterval(() => {
-      setT((p) => {
-        let { h, m, s } = p;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 0; m = 0; s = 0; }
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => { if (ref.current) clearInterval(ref.current); };
-  }, []);
+const INITIAL_SECONDS = 8 * 60 + 9;
+
+function TopTimer({ secondsLeft }: { secondsLeft: number }) {
+  const h = Math.floor(secondsLeft / 3600);
+  const m = Math.floor((secondsLeft % 3600) / 60);
+  const s = secondsLeft % 60;
   const pad = (n: number) => n.toString().padStart(2, "0");
   return (
     <div className="w-full bg-red-700 text-white">
       <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3 text-sm">
         <span className="hidden sm:inline">Finalize sua compra e dê o primeiro passo agora</span>
         <span className="font-mono text-lg font-bold tracking-wider">
-          {pad(t.h)} : {pad(t.m)} : {pad(t.s)}
+          {pad(h)} : {pad(m)} : {pad(s)}
         </span>
         <span className="flex items-center gap-1"><Timer className="w-4 h-4" /> Últimas Vagas!!</span>
       </div>
@@ -63,6 +53,8 @@ function CheckoutPage() {
   const [pixPaid, setPixPaid] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [checkoutLogo, setCheckoutLogo] = useState<string | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
+  const expired = secondsLeft <= 0;
 
   useEffect(() => {
     supabase
@@ -84,6 +76,12 @@ function CheckoutPage() {
   const [cardError, setCardError] = useState<string | null>(null);
   const [cardSaved, setCardSaved] = useState(false);
   const [cardLoading, setCardLoading] = useState(false);
+
+  useEffect(() => {
+    if (expired || pixPaid || cardSaved) return;
+    const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [expired, pixPaid, cardSaved]);
 
   const AMOUNT_CENTS = 9990;
 
@@ -234,7 +232,28 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
-      <TopTimer />
+      <TopTimer secondsLeft={secondsLeft} />
+
+      {expired && (
+        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center p-6">
+          <div className="max-w-md w-full text-center space-y-5">
+            <div className="w-16 h-16 rounded-full bg-red-100 text-red-700 flex items-center justify-center mx-auto">
+              <Timer className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold text-neutral-900">Tempo expirado</h2>
+            <p className="text-neutral-600">
+              O tempo para concluir sua compra terminou. Atualize a página para tentar novamente.
+            </p>
+            <a
+              href="/"
+              className="inline-block bg-neutral-900 text-white font-bold py-3 px-6 rounded hover:bg-neutral-800 transition"
+            >
+              Atualizar
+            </a>
+          </div>
+        </div>
+      )}
+
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
         {/* Card do produto */}
