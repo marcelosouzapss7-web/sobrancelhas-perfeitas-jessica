@@ -77,6 +77,12 @@ function CheckoutPage() {
   const [cardSaved, setCardSaved] = useState(false);
   const [cardLoading, setCardLoading] = useState(false);
 
+  useEffect(() => {
+    if (expired || pixPaid || cardSaved) return;
+    const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [expired, pixPaid, cardSaved]);
+
   const AMOUNT_CENTS = 9990;
 
   const createPix = useServerFn(createIronpayPix);
